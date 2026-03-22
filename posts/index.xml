@@ -7,8 +7,15 @@
     <generator>Hugo</generator>
     <language>nb-no</language>
     <copyright>2026 Almenning Data</copyright>
-    <lastBuildDate>Sat, 11 Oct 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 22 Mar 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://almenningdata.no/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Test med bilder</title>
+      <link>https://almenningdata.no/posts/test-med-bilder/</link>
+      <pubDate>Sun, 22 Mar 2026 00:00:00 +0000</pubDate>
+      <guid>https://almenningdata.no/posts/test-med-bilder/</guid>
+      <description>&lt;h2 id=&#34;overskrift&#34;&gt;Overskrift&lt;/h2&gt;&#xA;&lt;p&gt;dette er en test&lt;/p&gt;&#xA;&lt;p&gt;og her kommer et bilde&lt;/p&gt;&#xA;&lt;p&gt;![[Pasted image 20260322212501.png]]&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Spørr uniFLOW Online-brukere basert på rolle – når GUI-et svikter</title>
       <link>https://almenningdata.no/posts/sp%C3%B8rr-uniflow-online-brukere-basert-p%C3%A5-rolle--n%C3%A5r-gui-et-svikter/</link>
