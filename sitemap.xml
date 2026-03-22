@@ -2,24 +2,26 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>//localhost:1313/</loc>
+    <loc>https://almenningdata.no/</loc>
     <lastmod>2025-10-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:1313/posts/</loc>
+    <loc>https://almenningdata.no/posts/</loc>
     <lastmod>2025-10-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:1313/tags/printandscan/</loc>
+    <loc>https://almenningdata.no/tags/printandscan/</loc>
     <lastmod>2025-10-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:1313/posts/sp%C3%B8rr-uniflow-online-brukere-basert-p%C3%A5-rolle--n%C3%A5r-gui-et-svikter/</loc>
+    <loc>https://almenningdata.no/posts/sp%C3%B8rr-uniflow-online-brukere-basert-p%C3%A5-rolle--n%C3%A5r-gui-et-svikter/</loc>
     <lastmod>2025-10-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:1313/tags/</loc>
+    <loc>https://almenningdata.no/tags/</loc>
     <lastmod>2025-10-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:1313/tags/uniflow/</loc>
+    <loc>https://almenningdata.no/tags/uniflow/</loc>
     <lastmod>2025-10-11T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:1313/categories/</loc>
+    <loc>https://almenningdata.no/showcase/</loc>
+  </url><url>
+    <loc>https://almenningdata.no/categories/</loc>
   </url>
 </urlset>
