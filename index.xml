@@ -10,18 +10,18 @@
     <lastBuildDate>Sun, 22 Mar 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://almenningdata.no/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>shit its på norsk</title>
-      <link>https://almenningdata.no/posts/shit-its-p%C3%A5-norsk/</link>
-      <pubDate>Sun, 22 Mar 2026 00:00:00 +0000</pubDate>
-      <guid>https://almenningdata.no/posts/shit-its-p%C3%A5-norsk/</guid>
-      <description>&lt;p&gt;De fleste tekniske IT/tek artikler der ute er naturligvis på engelsk. De skal nå ut til et bredest mulig publikum. Jeg har valgt å gå en litt annen vei. Jeg ønsker å bruke norsk, fordi jeg mener at det trengs flere gode, tekniske ressurser på vårt eget språk. Det passer fint med målet mitt som først og fremst er å ha denne siden til min egen dokumentasjon.&lt;/p&gt;&#xA;&lt;p&gt;!&lt;img src=&#34;https://almenningdata.no/images/Pasted%20image%2020260322212501.png&#34; alt=&#34;Image Description&#34;&gt;&lt;/p&gt;</description>
-    </item>
-    <item>
       <title>Spørr uniFLOW Online-brukere basert på rolle – når GUI-et svikter</title>
       <link>https://almenningdata.no/posts/sp%C3%B8rr-uniflow-online-brukere-basert-p%C3%A5-rolle--n%C3%A5r-gui-et-svikter/</link>
-      <pubDate>Sat, 11 Oct 2025 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 22 Mar 2026 00:00:00 +0000</pubDate>
       <guid>https://almenningdata.no/posts/sp%C3%B8rr-uniflow-online-brukere-basert-p%C3%A5-rolle--n%C3%A5r-gui-et-svikter/</guid>
       <description>&lt;p&gt;Administrasjon av brukere i uniFLOW Online kan raskt bli frustrerende, spesielt hvis tennanten din har &lt;strong&gt;tusenvis av brukere&lt;/strong&gt;. Webinterfacet klarer ofte ikke å filtrere roller riktig når antallet brukere overstiger 500, noe som gjør oppgaver som å finne administratorer eller andre rollebasede brukere nærmest umulige.&lt;/p&gt;&#xA;&lt;p&gt;I dette innlegget vil jeg vise hvordan jeg kan &lt;strong&gt;bruke PowerShell til å hente uniFLOW Online-brukere basert på rolle&lt;/strong&gt;, lagre resultatene for gjenbruk, og dermed unngå begrensningene i GUI-et.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>shit its på norsk</title>
+      <link>https://almenningdata.no/posts/shit-its-p%C3%A5-norsk/</link>
+      <pubDate>Sat, 21 Mar 2026 00:00:00 +0000</pubDate>
+      <guid>https://almenningdata.no/posts/shit-its-p%C3%A5-norsk/</guid>
+      <description>&lt;p&gt;De fleste tekniske IT/tek artikler der ute er naturligvis på engelsk. De skal nå ut til et bredest mulig publikum. Jeg har valgt å gå en litt annen vei. Jeg ønsker å bruke norsk, fordi jeg mener at det trengs flere gode, tekniske ressurser på vårt eget språk. Det passer fint med målet mitt som først og fremst er å ha denne siden til min egen dokumentasjon.&lt;/p&gt;&#xA;&lt;p&gt;![[Pasted image 20260322213340.png|229]]&lt;/p&gt;</description>
     </item>
     <item>
       <title></title>
