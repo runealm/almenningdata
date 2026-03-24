@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta name="generator" content="Hugo 0.159.0">
   
-    <title>Almenning Data</title>
+    <title>Multi-Admin Approval :: Almenning Data</title>
   
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="" />
+<meta name="description" content="Stryker 200.000 enheter. WIPA. borte. game over&hellip;.
+Det er hva som skjedde i Stryker-angrepet — ikke via malware, ikke via en ukjent sårbarhet, men fra innsiden via MDM. Ingen skjulte bakdører, ingen avansert kode. Bare tilgang som ble misbrukt.
+Filmen Zero Days (2016) minner oss om noe ubehagelig: døren er aldri helt lukket. Spørsmålet er ikke lenger om noen kommer inn — men hva som møter dem på den andre siden.
+" />
 <meta name="keywords" content="" />
 
   <meta name="robots" content="noodp" />
 
-<link rel="canonical" href="https://almenningdata.no/" />
+<link rel="canonical" href="https://almenningdata.no/posts/multi-admin-approval/" />
 
 
 
@@ -72,10 +74,13 @@
 
 
 <meta property="og:locale" content="en" />
-<meta property="og:type" content="website" />
-<meta property="og:title" content="Almenning Data">
-<meta property="og:description" content="" />
-<meta property="og:url" content="https://almenningdata.no/" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Multi-Admin Approval">
+<meta property="og:description" content="Stryker 200.000 enheter. WIPA. borte. game over&hellip;.
+Det er hva som skjedde i Stryker-angrepet — ikke via malware, ikke via en ukjent sårbarhet, men fra innsiden via MDM. Ingen skjulte bakdører, ingen avansert kode. Bare tilgang som ble misbrukt.
+Filmen Zero Days (2016) minner oss om noe ubehagelig: døren er aldri helt lukket. Spørsmålet er ikke lenger om noen kommer inn — men hva som møter dem på den andre siden.
+" />
+<meta property="og:url" content="https://almenningdata.no/posts/multi-admin-approval/" />
 <meta property="og:site_name" content="Almenning Data" />
 
   <meta property="og:image" content="https://almenningdata.no/og-image.png">
@@ -84,10 +89,10 @@
 <meta property="og:image:height" content="627">
 
 
+  <meta property="article:published_time" content="2026-03-24 00:00:00 &#43;0000 UTC" />
 
 
 
-  <link href="/index.xml" rel="alternate" type="application/rss+xml" title="Almenning Data" />
 
 
 
@@ -199,41 +204,28 @@
 
   <div class="content">
     
+<article class="post">
+  <h1 class="post-title">
+    <a href="https://almenningdata.no/posts/multi-admin-approval/">Multi-Admin Approval</a>
+  </h1>
+  <div class="post-meta"><time class="post-date">2026-03-24</time></div>
+
   
-  <div class="posts">
-    
-    
-
-    
-    
+    <span class="post-tags">
       
-    
-    
-
-    
-      <article class="post on-list">
-        <h2 class="post-title">
-          <a href="https://almenningdata.no/posts/multi-admin-approval/">Multi-Admin Approval</a>
-        </h2>
-
-        <div class="post-meta"><time class="post-date">2026-03-24</time></div>
-
-        
-          <span class="post-tags">
-            
-            #<a href="https://almenningdata.no/tags/intune/">Intune</a>&nbsp;
-            
-            #<a href="https://almenningdata.no/tags/sikkerhet/">Sikkerhet</a>&nbsp;
-            
-          </span>
-        
-
-        
+      #<a href="https://almenningdata.no/tags/intune/">Intune</a>&nbsp;
+      
+      #<a href="https://almenningdata.no/tags/sikkerhet/">Sikkerhet</a>&nbsp;
+      
+    </span>
+  
+  
 
 
-        <div class="post-content">
-          
-            <h2 id="stryker">Stryker</h2>
+  
+
+  <div class="post-content"><div>
+        <h2 id="stryker">Stryker<a href="#stryker" class="hanchor" ariaLabel="Anchor">#</a> </h2>
 <hr>
 <p>200.000 enheter. WIPA. borte. game over&hellip;.</p>
 <p>Det er hva som skjedde i Stryker-angrepet — ikke via malware, ikke via en ukjent sårbarhet,
@@ -241,86 +233,48 @@ men fra innsiden via MDM. Ingen skjulte bakdører, ingen avansert kode.
 Bare tilgang som ble misbrukt.</p>
 <p>Filmen <a href="https://www.imdb.com/title/tt4964772/">Zero Days (2016)</a> minner oss om noe ubehagelig: døren er aldri helt lukket.
 Spørsmålet er ikke lenger <em>om</em> noen kommer inn — men hva som møter dem på den andre siden.</p>
-          
-        </div>
+<h2 id="ikke-best-bare-ikke-dårligst">Ikke best, bare ikke dårligst<a href="#ikke-best-bare-ikke-dårligst" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Med mindre du er et målrettet angrep, handler litt av sikkerhet om å ikke være
+det letteste offeret. Små fartsdumper som gjør at angriperen velger noen andre i stedet.</p>
+<p>Det kan være så enkelt som å endre standard påloggingsbilde i tenanten din,
+gode compliance policyer, eller å håndheve compliance med conditional access.
+Arbeidet stopper aldri — det å kontinuerlig bygge disse små fartsdumpene er selve jobben.</p>
+<p>En slik fartsdumpe er <strong>Multi-Admin Approval</strong> i Intune.</p>
+<h2 id="hva-er-multi-admin-approval">Hva er Multi-Admin Approval?<a href="#hva-er-multi-admin-approval" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Multi-Admin Approval krever at kritiske handlinger i Intune må godkjennes av
+flere administratorer før de utføres. Én person alene kan ikke trykke på den store
+røde knappen — uansett om det er med vilje eller ikke.</p>
+<p>I dag kan du sette opp Multi-Admin Approval på disse:</p>
+<p>!<img src="/images/Pasted%20image%2020260324203115.png" alt="Image Description"></p>
 
-        
-          <div>
-            <a class="read-more button inline" href="/posts/multi-admin-approval/">[Les mer]</a>
-          </div>
-        
-      </article>
+      </div></div>
+
+  
     
-      <article class="post on-list">
-        <h2 class="post-title">
-          <a href="https://almenningdata.no/posts/sp%C3%B8rr-uniflow-online-brukere-basert-p%C3%A5-rolle--n%C3%A5r-gui-et-svikter/">Spørr uniFLOW Online-brukere basert på rolle – når GUI-et svikter</a>
-        </h2>
-
-        <div class="post-meta"><time class="post-date">2026-03-22</time></div>
-
-        
-          <span class="post-tags">
-            
-            #<a href="https://almenningdata.no/tags/uniflow/">uniflow</a>&nbsp;
-            
-            #<a href="https://almenningdata.no/tags/printandscan/">printandscan</a>&nbsp;
-            
-          </span>
-        
-
-        
-
-
-        <div class="post-content">
-          
-            <p>Administrasjon av brukere i uniFLOW Online kan raskt bli frustrerende, spesielt hvis tennanten din har <strong>tusenvis av brukere</strong>. Webinterfacet klarer ofte ikke å filtrere roller riktig når antallet brukere overstiger 500, noe som gjør oppgaver som å finne administratorer eller andre rollebasede brukere nærmest umulige.</p>
-<p>I dette innlegget vil jeg vise hvordan jeg kan <strong>bruke PowerShell til å hente uniFLOW Online-brukere basert på rolle</strong>, lagre resultatene for gjenbruk, og dermed unngå begrensningene i GUI-et.</p>
-          
-        </div>
-
-        
-          <div>
-            <a class="read-more button inline" href="/posts/sp%C3%B8rr-uniflow-online-brukere-basert-p%C3%A5-rolle--n%C3%A5r-gui-et-svikter/">[Les mer]</a>
-          </div>
-        
-      </article>
-    
-      <article class="post on-list">
-        <h2 class="post-title">
-          <a href="https://almenningdata.no/posts/shit-its-p%C3%A5-norsk/">shit its på norsk</a>
-        </h2>
-
-        <div class="post-meta"><time class="post-date">2026-03-21</time></div>
-
-        
-
-        
-
-
-        <div class="post-content">
-          
-            <p>De fleste tekniske IT/tek artikler der ute er naturligvis på engelsk. De skal nå ut til et bredest mulig publikum. Jeg har valgt å gå en litt annen vei. Jeg ønsker å bruke norsk, fordi jeg mener at det trengs flere gode, tekniske ressurser på vårt eget språk. Det passer fint med målet mitt som først og fremst er å ha denne siden til min egen dokumentasjon.</p>
-<p>!<img src="/images/Pasted%20image%2020260322213555.png" alt="Image Description"></p>
-          
-        </div>
-
-        
-          <div>
-            <a class="read-more button inline" href="/posts/shit-its-p%C3%A5-norsk/">[Les mer]</a>
-          </div>
-        
-      </article>
-    
-
-    <div class="pagination">
+<div class="pagination">
+  <div class="pagination__title">
+    <span class="pagination__title-h"></span>
+    <hr />
+  </div>
   <div class="pagination__buttons">
     
     
     
+      <a href="https://almenningdata.no/posts/sp%C3%B8rr-uniflow-online-brukere-basert-p%C3%A5-rolle--n%C3%A5r-gui-et-svikter/" class="button inline next">
+         [<span class="button__text">Spørr uniFLOW Online-brukere basert på rolle – når GUI-et svikter</span>] &gt;
+      </a>
+    
   </div>
 </div>
 
-  </div>
+
+  
+
+  
+    
+
+  
+</article>
 
   </div>
 
