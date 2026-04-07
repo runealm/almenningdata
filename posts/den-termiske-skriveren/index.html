@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>den termiske skriveren :: Almenning Data</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Så da jeg kom over Andrew Schmelyhuns ping-prosjekt, bestemte jeg meg for å sette opp noe lignende selv.
+!
+Litt om termiske skrivere Før jeg går inn på hva jeg har fiklet med, synes jeg det er verdt å si litt om hvorfor termiske skrivere er så kule!
+Teknologien ble først tatt i bruk på 1930-tallet i medisinske apparater – de tidligste EKG-maskinene brukte varmesensitivt papir for å tegne opp hjerterytmer.
+" />
+<meta name="keywords" content="" />
+
+  <meta name="robots" content="noodp" />
+
+<link rel="canonical" href="https://almenningdata.no/posts/den-termiske-skriveren/" />
+
+
+
+
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/buttons.min.86f6b4c106b6c6eb690ae5203d36b442c1f66f718ff4e8164fa86cf6c61ad641.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/code.min.c4581949edab7810737609fc5568852bcd908945f14561e366dcd2300a370545.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/fonts.min.5bb7ed13e1d00d8ff39ea84af26737007eb5051b157b86fc24487c94f3dc8bbe.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/footer.min.eb8dfc2c6a7eafa36cd3ba92d63e69e849e2200e0002a228d137f236b09ecd75.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/gist.min.a751e8b0abe1ba8bc53ced52a38b19d8950fe78ca29454ea8c2595cf26aad5c0.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/header.min.75c7eb0e2872d95ff48109c6647d0223a38db52e2561dd87966eb5fc7c6bdac6.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/main.min.36833afd348409fc6c3d09d0897c5833d9d5bf1ff31f5e60ea3ee42ce2b1268c.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/menu.min.3c17467ebeb3d38663dce68f71f519901124fa5cbb4519b2fb0667a21e9aca39.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/pagination.min.bbb986dbce00a5ce5aca0504b7925fc1c581992a4bf57f163e5d69cc1db7d836.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/post.min.e6dddd258e64c83e05cec0cd49c05216742d42fc8ecbfbe6b67083412b609bd3.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/syntax.min.a2cc694a9b481f15d41722bffc2cc54eea4c4f74fd9072b0b33253604c22606e.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/terminal.min.e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/terms.min.b81791663c3790e738e571cdbf802312390d30e4b1d8dc9d814a5b5454d0ac11.css">
+
+
+
+
+
+
+
+<link rel="shortcut icon" href="https://almenningdata.no/favicon.png">
+<link rel="apple-touch-icon" href="https://almenningdata.no/apple-touch-icon.png">
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="den termiske skriveren">
+<meta property="og:description" content="Så da jeg kom over Andrew Schmelyhuns ping-prosjekt, bestemte jeg meg for å sette opp noe lignende selv.
+!
+Litt om termiske skrivere Før jeg går inn på hva jeg har fiklet med, synes jeg det er verdt å si litt om hvorfor termiske skrivere er så kule!
+Teknologien ble først tatt i bruk på 1930-tallet i medisinske apparater – de tidligste EKG-maskinene brukte varmesensitivt papir for å tegne opp hjerterytmer.
+" />
+<meta property="og:url" content="https://almenningdata.no/posts/den-termiske-skriveren/" />
+<meta property="og:site_name" content="Almenning Data" />
+
+  <meta property="og:image" content="https://almenningdata.no/og-image.png">
+
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+
+
+  <meta property="article:published_time" content="2026-04-07 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+<style>
+  .code-block-wrapper {
+    position: relative;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    background: #555;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    opacity: 0.7;
+  }
+  .copy-btn:hover { opacity: 1; }
+</style>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("pre").forEach(function (pre) {
+      var wrapper = document.createElement("div");
+      wrapper.className = "code-block-wrapper";
+      pre.parentNode.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+
+      var btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.innerText = "Copy";
+      wrapper.appendChild(btn);
+
+      btn.addEventListener("click", function () {
+        var code = pre.innerText;
+        navigator.clipboard.writeText(code).then(function () {
+          btn.innerText = "Copied!";
+          setTimeout(function () { btn.innerText = "Copy"; }, 2000);
+        });
+      });
+    });
+  });
+</script>
+
+</head>
+<body>
+
+
+<div class="container">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    almenningdata
+  </div>
+</a>
+
+    </div>
+    
+      <ul class="menu menu--mobile">
+  <li class="menu__trigger">Menu&nbsp;▾</li>
+  <li>
+    <ul class="menu__dropdown">
+      
+        
+          <li><a href="/about">whoami</a></li>
+        
+      
+        
+          <li><a href="/showcase">prosjekter</a></li>
+        
+      
+        
+          <li><a href="https://ping.almenningdata.no">ping</a></li>
+        
+      
+      
+    </ul>
+  </li>
+</ul>
+
+    
+    
+  </div>
+  
+    <nav class="navigation-menu">
+  <ul class="navigation-menu__inner menu--desktop">
+    
+      
+        
+          <li><a href="/about" >whoami</a></li>
+        
+      
+        
+          <li><a href="/showcase" >prosjekter</a></li>
+        
+      
+        
+          <li><a href="https://ping.almenningdata.no" >ping</a></li>
+        
+      
+      
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<article class="post">
+  <h1 class="post-title">
+    <a href="https://almenningdata.no/posts/den-termiske-skriveren/">den termiske skriveren</a>
+  </h1>
+  <div class="post-meta"><time class="post-date">2026-04-07</time></div>
+
+  
+    <span class="post-tags">
+      
+      #<a href="https://almenningdata.no/tags/printandscan/">printandscan</a>&nbsp;
+      
+      #<a href="https://almenningdata.no/tags/fikler/">fikler</a>&nbsp;
+      
+    </span>
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>Så da jeg kom over <a href="https://github.com/aschmelyun/ping-receipt">Andrew Schmelyhuns ping-prosjekt</a>, bestemte jeg meg for å sette opp noe lignende selv.</p>
+<p>!<img src="/images/printer.png" alt="Image Description"></p>
+<h2 id="litt-om-termiske-skrivere">Litt om termiske skrivere<a href="#litt-om-termiske-skrivere" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Før jeg går inn på hva jeg har fiklet med, synes jeg det er verdt å si litt om hvorfor termiske skrivere er så kule!</p>
+<p>Teknologien ble først tatt i bruk på 1930-tallet i medisinske apparater – de tidligste EKG-maskinene brukte varmesensitivt papir for å tegne opp hjerterytmer.</p>
+<p>Det store gjennombruddet kom i 1965 da ingeniøren Jack Kilby hos Texas Instruments – samme mann som senere vant Nobelprisen i fysikk for å ha oppfunnet integrerte kretser – patenterte et termisk skriverhode. I 1969 kom Texas Instruments med <strong>Silent 700</strong>, den første kommersielle maskinen som brukte termisk printing. Den fikk navnet sitt av en god grunn: ingen støy, ingen blekkpatron, ingen bevegelige deler.</p>
+<p>Det er nettopp det som gjør teknologien kul. Papiret er belagt med en kjemisk coating som reagerer på varme. Skriverhodet inneholder hundrevis av bittesmå varmeelementer som aktiveres presist, og der varmen treffer papiret, reagerer belegget og farges mørkt. Ingen blekk, ingen toner, ingen bånd – bare varme og kjemi.</p>
+<p>Siden 1970-tallet har termiske skrivere vært overalt – kassaapparater, billettsystemer, faksapparater, parkeringsautomater og kortterminaler. Teknologien er billig, rask og krever minimalt vedlikehold. Akkurat derfor er den så utbredt. Og akkurat derfor er den kul å leke med hjemme.</p>
+<h2 id="hva-er-dette-egentlig">Hva er dette egentlig?<a href="#hva-er-dette-egentlig" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Enkelt forklart: du går til <a href="https://ping.almenningdata.no/">ping.almenningdata.no</a>, skriver inn en melding, trykker send – og noen sekunder senere skrives meldingen ut på en kvitteringsskriver her hos meg.</p>
+<h2 id="hva-trenger-du">Hva trenger du?<a href="#hva-trenger-du" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<ul>
+<li>En kvitteringsskriver som støtter ESC/POS (eldre Epson-modeller fungerer fint)</li>
+<li>En Raspberry Pi – jeg brukte en gammel Pi 3 modell b</li>
+<li>Docker</li>
+<li>En Cloudflare-konto (gratis)</li>
+</ul>
+<h2 id="slik-satte-jeg-det-opp">Slik satte jeg det opp<a href="#slik-satte-jeg-det-opp" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<h3 id="1-raspberry-pi-os">1. Raspberry Pi OS<a href="#1-raspberry-pi-os" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>Jeg flashet <strong>Raspberry Pi OS Lite (64-bit)</strong> til et SD-kort med Raspberry Pi Imager. Under flashing konfigurerte jeg WiFi, SSH og brukernavn direkte i Imager – så jeg slapp å koble til skjerm og tastatur.</p>
+<h3 id="2-docker">2. Docker<a href="#2-docker" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>Etter at Pi-en var oppe installerte jeg Docker:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -sSL https://get.docker.com | sh
+</span></span><span style="display:flex;"><span>sudo usermod -aG docker $USER
+</span></span></code></pre></div><h3 id="3-appen">3. Appen<a href="#3-appen" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>Jeg klonet Andrew sitt repo og tilpasset navnet i kontrolleren:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://github.com/aschmelyun/ping-receipt.git
+</span></span><span style="display:flex;"><span>cd ping-receipt
+</span></span></code></pre></div><p>Siden repoet ikke inkluderer en <code>.env</code>-fil eller kjører <code>composer install</code> i Dockerfilen, måtte jeg oppdatere <code>Dockerfile</code> litt:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-dockerfile" data-lang="dockerfile"><span style="display:flex;"><span><span style="color:#66d9ef">FROM</span> <span style="color:#e6db74">php:8.2</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">ADD</span> ./ /srv/<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">WORKDIR</span> <span style="color:#e6db74">/srv</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">RUN</span> apt-get -y update <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    <span style="color:#f92672">&amp;&amp;</span> apt-get install -y libicu-dev curl unzip nodejs npm <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    <span style="color:#f92672">&amp;&amp;</span> docker-php-ext-configure intl <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>    <span style="color:#f92672">&amp;&amp;</span> docker-php-ext-install intl<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">RUN</span> curl -sS https://getcomposer.org/installer | php -- --install-dir<span style="color:#f92672">=</span>/usr/local/bin --filename<span style="color:#f92672">=</span>composer<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">RUN</span> composer install --no-dev --optimize-autoloader<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">RUN</span> npm install <span style="color:#f92672">&amp;&amp;</span> npm run build<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">RUN</span> usermod -a -G lp root<span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">USER</span> <span style="color:#e6db74">root</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">EXPOSE</span> <span style="color:#e6db74">8000</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span><span style="display:flex;"><span><span style="color:#66d9ef">CMD</span> php artisan serve --host 0.0.0.0 --port <span style="color:#ae81ff">8000</span><span style="color:#960050;background-color:#1e0010">
+</span></span></span></code></pre></div><p>Jeg genererte en APP_KEY og la den inn i <code>.env</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cp .env.example .env
+</span></span><span style="display:flex;"><span>docker run --rm php:8.2 php -r <span style="color:#e6db74">&#34;echo &#39;base64:&#39; . base64_encode(random_bytes(32)) . PHP_EOL;&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Lim inn nøkkelen i .env under APP_KEY=</span>
+</span></span></code></pre></div><p>Så satte jeg tidssone i <code>config/app.php</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#e6db74">&#39;timezone&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;Europe/Oslo&#39;</span>,
+</span></span></code></pre></div><p>Og oppdaterte <code>start.sh</code> så containeren starter automatisk og har tilgang til skriveren:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/bash
+</span></span></span><span style="display:flex;"><span>docker run -d <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --restart unless-stopped <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  --privileged <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  -e TZ<span style="color:#f92672">=</span>Europe/Oslo <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  -v <span style="color:#66d9ef">$(</span>pwd<span style="color:#66d9ef">)</span>/database/database.sqlite:/srv/database/database.sqlite <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  -v /dev/usb/lp0:/dev/usb/lp0 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  -p 8000:8000 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>  ping-app:latest
+</span></span></code></pre></div><p>Bygg og start:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>touch database/database.sqlite
+</span></span><span style="display:flex;"><span>docker build -t ping-app:latest .
+</span></span><span style="display:flex;"><span>./start.sh
+</span></span><span style="display:flex;"><span>docker exec <span style="color:#66d9ef">$(</span>docker ps -q<span style="color:#66d9ef">)</span> php artisan migrate --force
+</span></span></code></pre></div><h3 id="4-cloudflare-tunnel">4. Cloudflare Tunnel<a href="#4-cloudflare-tunnel" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>For å gjøre tjenesten tilgjengelig fra internett uten å åpne porter i ruteren brukte jeg Cloudflare Tunnel. Jeg flyttet DNS for <code>almenningdata.no</code> til Cloudflare (nameserverne endres hos domeneregistraren, selve domenet beholdes der det er), og satte opp en tunnel på Pi-en:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cloudflared tunnel login
+</span></span><span style="display:flex;"><span>cloudflared tunnel create ping-rune
+</span></span><span style="display:flex;"><span>cloudflared tunnel route dns ping-rune ping.almenningdata.no
+</span></span></code></pre></div><p>Konfigurasjonsfil i <code>/etc/cloudflared/config.yml</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">tunnel</span>: <span style="color:#ae81ff">&lt;tunnel-id&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">credentials-file</span>: <span style="color:#ae81ff">/etc/cloudflared/&lt;tunnel-id&gt;.json</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">ingress</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">hostname</span>: <span style="color:#ae81ff">ping.almenningdata.no</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">service</span>: <span style="color:#ae81ff">http://localhost:8000</span>
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">service</span>: <span style="color:#ae81ff">http_status:404</span>
+</span></span></code></pre></div><p>Installer som systemd-tjeneste:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo cloudflared service install
+</span></span><span style="display:flex;"><span>sudo systemctl enable cloudflared
+</span></span><span style="display:flex;"><span>sudo systemctl start cloudflared
+</span></span></code></pre></div><h2 id="resultat">Resultat<a href="#resultat" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Nå kjører alt automatisk. Pi-en starter Docker-containeren og Cloudflare Tunnel ved oppstart, og <a href="https://ping.almenningdata.no/">ping.almenningdata.no</a> er tilgjengelig hele tiden.</p>
+
+      </div></div>
+
+  
+    
+<div class="pagination">
+  <div class="pagination__title">
+    <span class="pagination__title-h"></span>
+    <hr />
+  </div>
+  <div class="pagination__buttons">
+    
+    
+    
+      <a href="https://almenningdata.no/posts/multi-admin-approval/" class="button inline next">
+         [<span class="button__text">Multi-Admin Approval</span>] &gt;
+      </a>
+    
+  </div>
+</div>
+
+
+  
+
+  
+    
+
+  
+</article>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">
+        <span>2026 Almenning Data</span>
+    
+      <span>:: <a href="https://github.com/panr/hugo-theme-terminal" target="_blank">Theme</a> made by <a href="https://github.com/panr" target="_blank">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+
+
+
+
+
+<script type="text/javascript" src="/bundle.min.js"></script>
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Fikler on Almenning Data</title>
+    <link>https://almenningdata.no/tags/fikler/</link>
+    <description>Recent content in Fikler on Almenning Data</description>
+    <generator>Hugo</generator>
+    <language>nb-no</language>
+    <copyright>2026 Almenning Data</copyright>
+    <lastBuildDate>Tue, 07 Apr 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://almenningdata.no/tags/fikler/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>den termiske skriveren</title>
+      <link>https://almenningdata.no/posts/den-termiske-skriveren/</link>
+      <pubDate>Tue, 07 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>https://almenningdata.no/posts/den-termiske-skriveren/</guid>
+      <description>&lt;p&gt;Så da jeg kom over &lt;a href=&#34;https://github.com/aschmelyun/ping-receipt&#34;&gt;Andrew Schmelyhuns ping-prosjekt&lt;/a&gt;, bestemte jeg meg for å sette opp noe lignende selv.&lt;/p&gt;&#xA;&lt;p&gt;!&lt;img src=&#34;https://almenningdata.no/images/printer.png&#34; alt=&#34;Image Description&#34;&gt;&lt;/p&gt;&#xA;&lt;h2 id=&#34;litt-om-termiske-skrivere&#34;&gt;Litt om termiske skrivere&lt;/h2&gt;&#xA;&lt;p&gt;Før jeg går inn på hva jeg har fiklet med, synes jeg det er verdt å si litt om hvorfor termiske skrivere er så kule!&lt;/p&gt;&#xA;&lt;p&gt;Teknologien ble først tatt i bruk på 1930-tallet i medisinske apparater – de tidligste EKG-maskinene brukte varmesensitivt papir for å tegne opp hjerterytmer.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
