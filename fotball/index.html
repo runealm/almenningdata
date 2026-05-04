@@ -40,19 +40,106 @@
       header{gap:8px}
       h1{font-size:1.05rem}
     }
+    @media print {
+      /* Skjul alt som ikke er resultatet */
+      header, footer, #inputCard, #clipboardFallback {
+        display: none !important;
+      }
+
+      /* Print-vennlig bakgrunn og farger */
+      body {
+        background: #fff !important;
+        color: #000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        font-size: 11pt;
+      }
+
+      .wrap {
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      /* Resultat-kortet skal ikke ha skygge eller padding - blir for stort */
+      #resultCard {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: #fff !important;
+      }
+
+      /* Datoen og kampvert i svart, ikke grå */
+      #dateHeader {
+        color: #000 !important;
+        font-size: 14pt !important;
+        margin: 0 0 4px 0 !important;
+      }
+
+      #hostHeader {
+        color: #000 !important;
+        margin: 0 0 12px 0 !important;
+      }
+
+      /* Tabellen skal være tydelig på papir */
+      #scheduleTable {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        page-break-inside: auto;
+      }
+
+      #scheduleTable th,
+      #scheduleTable td {
+        border: 1px solid #999 !important;
+        padding: 6px 8px !important;
+      }
+
+      /* Behold bakgrunnsfarger ved utskrift */
+      #scheduleTable th {
+        background: #e5e7eb !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .slot-header td {
+        background: #dbeafe !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      /* Unngå at rader brytes midt i en runde */
+      .slot-header {
+        page-break-after: avoid;
+      }
+
+      tr {
+        page-break-inside: avoid;
+      }
+
+      /* Sammendrag */
+      .summary {
+        background: #f3f4f6 !important;
+        border-left-color: #6b7280 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        page-break-inside: avoid;
+        margin-top: 12px !important;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <img src="logo.png" alt="" onerror="this.style.display='none'">
+      <img src="logo.png" alt="Logo (bytt ut ved behov)">
       <div>
         <h1>Fotballplanleggeren ⚽</h1>
         <div style="font-size:0.9rem;color:var(--muted)">Generer kampoppsett til Spond</div>
       </div>
     </header>
 
-    <div class="card">
+    <div class="card" id="inputCard">
       <div class="grid">
         <div>
           <label for="teams">Lagnavn (ett per linje eller kommaseparert)</label>
@@ -104,8 +191,9 @@
       <div class="note" id="note">Algoritmen prøver å fordele kampene jevnt, slik at alle lag spiller ønsket antall kamper og venter minst mulig mellom kampene.</div>
     </div>
 
-    <div class="card" style="margin-top:14px">
-      <h2 id="dateHeader" style="margin:0 0 10px 0;font-size:1.05rem;color:var(--muted);font-weight:600"></h2>
+    <div class="card" id="resultCard" style="margin-top:14px">
+      <h2 id="dateHeader" style="margin:0 0 4px 0;font-size:1.05rem;color:var(--muted);font-weight:600"></h2>
+      <div id="hostHeader" style="margin:0 0 10px 0;font-size:0.95rem;color:var(--muted)"></div>
       <div class="table-wrap">
         <table id="scheduleTable" aria-live="polite">
           <thead>
@@ -129,9 +217,10 @@
 
     let matches = [];
 
-    // Sett dagens dato som default
+    // Sett dagens dato som default og dynamisk år i footer
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('startDate').value = isoDate(new Date());
+      document.getElementById('footerYear').textContent = new Date().getFullYear();
     });
 
     /**
@@ -240,7 +329,7 @@
         const fields = Math.max(1, parseInt(document.getElementById('fields').value || '1', 10));
         const matchesPerTeam = Math.max(1, parseInt(document.getElementById('matchesPerTeam').value || '3', 10));
         const matchTime = Math.max(1, parseInt(document.getElementById('matchTime').value || '15', 10));
-        const pauseTime = Math.max(0, parseInt(document.getElementById('pauseTime').value || '3', 10));
+        const pauseTime = Math.max(0, parseInt(document.getElementById('pauseTime').value || '5', 10));
         const startDateStr = document.getElementById('startDate').value;
         const startTimeStr = document.getElementById('startTime').value || '17:00';
         const [startHour, startMinute] = startTimeStr.split(':').map(n => parseInt(n, 10));
@@ -248,6 +337,19 @@
         if (!rawTeams) { alert('Skriv inn lag (minst 2).'); return; }
         const teams = rawTeams.split(/\r?\n|,/).map(s => s.trim()).filter(Boolean);
         if (teams.length < 2) { alert('Skriv inn minst 2 lag.'); return; }
+
+        // Sjekk for duplikate lagnavn (case-insensitive)
+        const seen = new Map();
+        const duplicates = [];
+        teams.forEach(t => {
+          const key = t.toLowerCase();
+          if (seen.has(key)) duplicates.push(t);
+          else seen.set(key, t);
+        });
+        if (duplicates.length) {
+          alert(`Du har skrevet samme lag flere ganger: ${[...new Set(duplicates)].join(', ')}. Hvert lag må ha et unikt navn.`);
+          return;
+        }
 
         if (matchesPerTeam >= teams.length) {
           alert(`Hvert lag kan maksimalt spille ${teams.length - 1} kamper (mot hvert av de andre lagene én gang).`);
@@ -271,6 +373,11 @@
         const dateHeaderEl = document.getElementById('dateHeader');
         const dateFormatted = start.toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
         dateHeaderEl.textContent = dateFormatted.charAt(0).toUpperCase() + dateFormatted.slice(1);
+
+        // Vis kampvert hvis fylt inn
+        const hostName = (document.getElementById('host').value || '').trim();
+        const hostHeaderEl = document.getElementById('hostHeader');
+        hostHeaderEl.textContent = hostName ? `Kampvert: ${hostName}` : '';
 
         slots.forEach((slotMatches, slotIdx) => {
           const slotStart = new Date(start.getTime() + slotIdx * blockLenMs);
@@ -392,7 +499,7 @@
     }
   </script>
   <footer style="text-align:center; margin-top:40px; font-size:13px; color:#666;">
-    Almenning Data - 2026
+    Almenning Data - <span id="footerYear"></span>
   </footer>
 </body>
 </html>
