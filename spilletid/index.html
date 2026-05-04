@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bytte">
+<meta name="theme-color" content="#0F6E56">
+<title>Byttesystem 3v3</title>
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIj48cmVjdCB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgcng9IjQwIiBmaWxsPSIjMEY2RTU2Ii8+PGNpcmNsZSBjeD0iOTAiIGN5PSI5MCIgcj0iNDgiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSI2Ii8+PHBhdGggZD0iTTkwIDQyIEw5MCAxMzggTTQyIDkwIEwxMzggOTAiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSI2Ii8+PC9zdmc+">
+<style>
+:root {
+  --bg: #f5f5f4;
+  --surface: #ffffff;
+  --surface-2: #ebeae5;
+  --border: rgba(0,0,0,0.12);
+  --border-strong: rgba(0,0,0,0.25);
+  --text: #1a1a1a;
+  --text-muted: #6b6b66;
+  --text-dim: #9a9a94;
+  --accent: #0F6E56;
+  --accent-bg: #E1F5EE;
+  --accent-text: #04342C;
+  --warn: #BA7517;
+  --warn-bg: #FAEEDA;
+  --danger: #A32D2D;
+  --danger-bg: #FCEBEB;
+  --info: #185FA5;
+  --info-bg: #E6F1FB;
+  --radius: 10px;
+  --radius-lg: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1a1a1a;
+    --surface: #262625;
+    --surface-2: #333332;
+    --border: rgba(255,255,255,0.12);
+    --border-strong: rgba(255,255,255,0.25);
+    --text: #f5f5f4;
+    --text-muted: #a8a8a2;
+    --text-dim: #6b6b66;
+    --accent: #1D9E75;
+    --accent-bg: #085041;
+    --accent-text: #9FE1CB;
+    --warn: #EF9F27;
+    --warn-bg: #633806;
+    --danger: #E24B4A;
+    --danger-bg: #501313;
+    --info: #378ADD;
+    --info-bg: #0C447C;
+  }
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+body {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+.app { max-width: 700px; margin: 0 auto; padding: 12px; }
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+  padding-top: 4px;
+}
+.tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 12px 8px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+}
+.tab.active {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.card-2 {
+  background: var(--surface-2);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+/* Clock */
+.clock-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.clock {
+  font-size: 44px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.clock-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.clock-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* Score */
+.score-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 10px;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+.score-side { display: flex; flex-direction: column; gap: 6px; }
+.score-side.right { align-items: flex-end; }
+.score-label { font-size: 12px; color: var(--text-muted); }
+.score-controls { display: flex; align-items: center; gap: 8px; }
+.score-num {
+  font-size: 28px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  min-width: 32px;
+  text-align: center;
+}
+.formation {
+  text-align: center;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 14px;
+  font-weight: 600;
+}
+.formation.alert {
+  background: var(--warn-bg);
+  border-color: var(--warn);
+  color: var(--warn);
+}
+.formation-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  min-height: 14px;
+}
+
+/* Buttons */
+button {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.1s, transform 0.05s;
+  min-height: 40px;
+}
+button:active { transform: scale(0.97); }
+button:hover { background: var(--surface-2); }
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+button.primary:hover { opacity: 0.9; }
+button.small {
+  padding: 6px 10px;
+  font-size: 13px;
+  min-height: 32px;
+}
+button.icon-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 20px;
+  font-weight: 600;
+  min-height: 36px;
+}
+button.danger {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 20px;
+  padding: 4px 8px;
+  min-height: 32px;
+}
+button.danger:hover { color: var(--danger); background: transparent; }
+
+/* Sub banner */
+.sub-banner {
+  display: none;
+  background: var(--info-bg);
+  border: 1px solid var(--info);
+  border-radius: var(--radius-lg);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.sub-banner.show { display: flex; }
+.sub-banner.due {
+  background: var(--warn-bg);
+  border-color: var(--warn);
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.sub-countdown {
+  font-size: 22px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--info);
+}
+.sub-banner.due .sub-countdown { color: var(--warn); }
+
+/* Player grids */
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 16px 0 8px;
+}
+.section-head h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+.section-count { font-size: 13px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+.player-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+}
+.player-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: background 0.1s, transform 0.05s;
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+.player-card:active { transform: scale(0.97); }
+.player-card.on-field {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+}
+.player-card.on-field .player-name { color: var(--accent-text); }
+.player-card.priority { border-color: var(--warn); }
+.player-name { font-size: 15px; font-weight: 600; }
+.player-time { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.player-card.priority .player-time { color: var(--warn); font-weight: 600; }
+.player-card.on-field .player-time { color: var(--accent-text); opacity: 0.8; }
+
+.empty {
+  grid-column: 1 / -1;
+  font-size: 13px;
+  color: var(--text-dim);
+  padding: 16px;
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+}
+
+/* Suggestion */
+.suggestion {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px 14px;
+  margin-top: 8px;
+}
+.suggestion.show { display: block; }
+.suggestion-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.suggestion-text { font-size: 14px; line-height: 1.5; }
+.suggestion-text strong { font-weight: 600; }
+
+/* Squad list */
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+.player-row label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  cursor: pointer;
+}
+.player-row input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+.player-row .row-time {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Form */
+input[type="text"], input[type="number"] {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 15px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  min-height: 40px;
+}
+input[type="text"]:focus, input[type="number"]:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+.input-row { display: flex; gap: 6px; margin-bottom: 12px; }
+.btn-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+
+/* Settings */
+.setting {
+  margin-bottom: 18px;
+}
+.setting label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.setting-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.setting-row input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 4px;
+  background: var(--border-strong);
+  border-radius: 2px;
+  outline: none;
+}
+.setting-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+}
+.setting-row input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: none;
+}
+.setting-value {
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 60px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 6px 0;
+}
+.toggle-row input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--accent);
+}
+
+.note {
+  font-size: 12px;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  margin-top: 16px;
+  line-height: 1.5;
+}
+
+/* Kamplogg */
+.log-entry {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+}
+.log-entry-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.log-entry-date {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.log-entry-result {
+  font-size: 18px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.log-entry-result.win { color: var(--accent); }
+.log-entry-result.loss { color: var(--danger); }
+.log-entry-result.draw { color: var(--text-muted); }
+.log-entry-body {
+  display: none;
+  border-top: 1px solid var(--border);
+  margin-top: 10px;
+  padding-top: 10px;
+}
+.log-entry.expanded .log-entry-body { display: block; }
+.log-entry.expanded .chev { transform: rotate(180deg); }
+.chev {
+  display: inline-block;
+  transition: transform 0.15s;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-left: 4px;
+}
+.log-time-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+}
+.log-time-row:last-child { border-bottom: none; }
+.log-time-row .name { color: var(--text); }
+.log-time-row .time { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.log-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+.log-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  text-align: center;
+}
+.log-summary-grid .stat {
+  padding: 6px 4px;
+}
+.log-summary-grid .stat-num {
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.log-summary-grid .stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Match-ferdig modal */
+.modal-bg {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-bg.show { display: flex; }
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  max-width: 400px;
+  width: 100%;
+}
+.modal h2 { margin: 0 0 12px; font-size: 22px; }
+.modal-summary { margin: 12px 0; }
+.modal-summary div {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.modal-summary div:last-child { border-bottom: none; }
+
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="tabs">
+    <button class="tab active" data-tab="match">Kamp</button>
+    <button class="tab" data-tab="squad">Tropp</button>
+    <button class="tab" data-tab="log">Logg</button>
+    <button class="tab" data-tab="settings">Innstillinger</button>
+  </div>
+
+  <!-- KAMP -->
+  <div id="panel-match" class="panel active">
+
+    <div class="card-2">
+      <div style="margin-bottom: 12px;">
+        <div class="clock-label" style="margin-bottom: 4px;">Motstander</div>
+        <input id="opponent-name" type="text" placeholder="Skriv inn lagnavn…" autocapitalize="words" autocomplete="off" />
+      </div>
+      <div class="clock-row">
+        <div>
+          <div class="clock-label">Kamptid</div>
+          <div id="clock" class="clock">00:00</div>
+        </div>
+        <div class="clock-buttons">
+          <button id="btn-start" class="primary">Start</button>
+          <button id="btn-pause">Pause</button>
+          <button id="btn-reset">Nullstill</button>
+        </div>
+      </div>
+
+      <div class="score-row">
+        <div class="score-side">
+          <span class="score-label">Oss</span>
+          <div class="score-controls">
+            <button class="icon-btn" data-score="us" data-delta="-1">−</button>
+            <span id="score-us" class="score-num">0</span>
+            <button class="icon-btn" data-score="us" data-delta="1">+</button>
+          </div>
+        </div>
+        <div>
+          <div id="formation-badge" class="formation">3v3</div>
+          <div id="diff-hint" class="formation-hint">&nbsp;</div>
+        </div>
+        <div class="score-side right">
+          <span id="them-label" class="score-label">Dem</span>
+          <div class="score-controls">
+            <button class="icon-btn" data-score="them" data-delta="-1">−</button>
+            <span id="score-them" class="score-num">0</span>
+            <button class="icon-btn" data-score="them" data-delta="1">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sub-banner" class="sub-banner">
+      <div>
+        <div class="clock-label">Neste bytte om</div>
+        <div id="sub-countdown" class="sub-countdown">02:00</div>
+      </div>
+      <button id="btn-do-sub" class="primary">Gjør bytte</button>
+    </div>
+
+    <div class="section-head">
+      <h3>På banen</h3>
+      <span id="on-count" class="section-count">0 / 3</span>
+    </div>
+    <div id="on-field" class="player-grid"></div>
+
+    <div class="section-head">
+      <h3>Benk</h3>
+      <span id="bench-count" class="section-count">0</span>
+    </div>
+    <div id="bench" class="player-grid"></div>
+
+    <div id="suggestion-box" class="suggestion">
+      <div class="suggestion-label">Foreslått bytte</div>
+      <div id="suggestion-text" class="suggestion-text"></div>
+    </div>
+
+  </div>
+
+  <!-- TROPP -->
+  <div id="panel-squad" class="panel">
+    <p style="font-size: 14px; color: var(--text-muted); margin: 0 0 14px;">
+      Hak av spillere som er på kamp. Tropp lagres mellom kamper.
+    </p>
+
+    <div id="squad-list"></div>
+
+    <div class="input-row">
+      <input id="new-player" type="text" placeholder="Legg til spiller…" autocapitalize="words" autocomplete="off" />
+      <button id="btn-add-player" class="primary">Legg til</button>
+    </div>
+
+    <div class="btn-row">
+      <button id="btn-check-all" class="small">Hak av alle</button>
+      <button id="btn-uncheck-all" class="small">Fjern alle</button>
+      <button id="btn-reset-times" class="small">Nullstill spilletid</button>
+    </div>
+  </div>
+
+  <!-- LOGG -->
+  <div id="panel-log" class="panel">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+      <p style="font-size: 14px; color: var(--text-muted); margin: 0;">
+        Loggførte kamper.
+      </p>
+      <div style="display: flex; gap: 6px;">
+        <button id="btn-export-csv" class="small">Eksporter CSV</button>
+      </div>
+    </div>
+
+    <div id="log-summary" class="card-2" style="display: none;"></div>
+
+    <div id="log-list"></div>
+
+    <div style="margin-top: 16px; display: flex; gap: 6px; flex-wrap: wrap;">
+      <button id="btn-log-current" class="small">Loggfør nåværende kamp</button>
+      <button id="btn-clear-log" class="small">Slett all logg</button>
+    </div>
+
+    <div class="note">
+      Kamper lagres automatisk når du trykker "Ny kamp" etter sluttsignalet, eller manuelt med knappen over. CSV egner seg for Excel/regneark – for full backup bruk "Last ned backup" på Innstillinger-fanen.
+    </div>
+  </div>
+
+  <!-- INNSTILLINGER -->
+  <div id="panel-settings" class="panel">
+
+    <div class="setting">
+      <label>Kamplengde</label>
+      <div class="setting-row">
+        <input id="match-length" type="range" min="5" max="30" step="1" value="15" />
+        <span id="match-length-out" class="setting-value">15 min</span>
+      </div>
+    </div>
+
+    <div class="setting">
+      <label>Bytteintervall</label>
+      <div class="setting-row">
+        <input id="sub-interval" type="range" min="1" max="5" step="1" value="2" />
+        <span id="sub-interval-out" class="setting-value">2 min</span>
+      </div>
+    </div>
+
+    <div class="setting">
+      <label class="toggle-row">
+        <input id="auto-44" type="checkbox" checked />
+        <span>Tillat 4v3 når vi ligger under med 4+ mål</span>
+      </label>
+    </div>
+
+    <div class="setting">
+      <label class="toggle-row">
+        <input id="sound-on" type="checkbox" checked />
+        <span>Lydvarsel ved bytte</span>
+      </label>
+    </div>
+
+    <div class="setting">
+      <label class="toggle-row">
+        <input id="vibrate-on" type="checkbox" checked />
+        <span>Vibrasjon ved bytte (telefon)</span>
+      </label>
+    </div>
+
+    <div class="setting">
+      <label class="toggle-row">
+        <input id="keep-awake" type="checkbox" />
+        <span>Hold skjermen våken under kamp</span>
+      </label>
+    </div>
+
+    <div class="setting" style="border-top: 1px solid var(--border); padding-top: 16px;">
+      <label>Sikkerhetskopi</label>
+      <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 10px;">
+        Last ned alt (tropp, innstillinger, logg) som én fil. Kan importeres på en annen enhet eller hvis dataene forsvinner.
+      </p>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <button id="btn-export-all" class="small">Last ned backup</button>
+        <button id="btn-import-all" class="small">Importer backup</button>
+        <input id="import-file" type="file" accept=".json,application/json" style="display: none;" />
+      </div>
+    </div>
+
+    <div class="note">
+      <strong style="color: var(--text); font-weight: 600;">Om lagring</strong><br>
+      Tropp, innstillinger og kamplogg lagres lokalt i din nettleser på denne enheten. Dataene deles ikke mellom enheter eller med andre brukere av appen.
+      <br><br>
+      Legg til på Hjem-skjerm på iPhone (Del-knapp → "Legg til på Hjem-skjerm") for app-følelse uten nettleserchrome. Husk å ta jevnlig backup – iOS kan rydde opp i app-data hvis appen ikke åpnes på flere uker.
+    </div>
+  </div>
+
+</div>
+
+<!-- Slutt-modal -->
+<div id="end-modal" class="modal-bg">
+  <div class="modal">
+    <h2>Kampen er ferdig</h2>
+    <div id="end-summary" class="modal-summary"></div>
+    <div style="display: flex; gap: 8px; margin-top: 16px;">
+      <button id="btn-close-modal" style="flex: 1;">Lukk</button>
+      <button id="btn-new-match" class="primary" style="flex: 1;">Ny kamp</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  const STORAGE_KEY = 'football_subs_v1';
+  const LOG_KEY = 'football_subs_log_v1';
+
+  // ---------- State ----------
+  let state = {
+    players: [],
+    matchSeconds: 0,
+    running: false,
+    scoreUs: 0,
+    scoreThem: 0,
+    opponent: '',
+    matchLengthMin: 15,
+    subIntervalMin: 2,
+    auto44: true,
+    soundOn: true,
+    vibrateOn: true,
+    keepAwake: false,
+    lastSubAt: 0,
+    matchEnded: false,
+  };
+
+  let matchLog = []; // [{id, date, scoreUs, scoreThem, durationSec, players: [{name, secondsPlayed}]}]
+
+  let tickInterval = null;
+  let lastTickMs = null;
+  let wakeLock = null;
+
+  // ---------- Persistence ----------
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw);
+        state.players = (saved.players || []).map(p => ({
+          id: p.id, name: p.name, present: p.present !== false,
+          secondsPlayed: 0, onField: false,
+        }));
+        state.matchLengthMin = saved.matchLengthMin ?? 15;
+        state.subIntervalMin = saved.subIntervalMin ?? 2;
+        state.auto44 = saved.auto44 ?? true;
+        state.soundOn = saved.soundOn ?? true;
+        state.vibrateOn = saved.vibrateOn ?? true;
+        state.keepAwake = saved.keepAwake ?? false;
+      }
+    } catch (e) { console.error('Load failed', e); }
+
+    if (state.players.length === 0) {
+      // Tom tropp ved første kjøring – brukeren legger inn selv
+      state.players = [];
+      state.isFirstRun = true;
+    }
+  }
+
+  function saveState() {
+    try {
+      const toSave = {
+        players: state.players.map(p => ({id: p.id, name: p.name, present: p.present})),
+        matchLengthMin: state.matchLengthMin,
+        subIntervalMin: state.subIntervalMin,
+        auto44: state.auto44,
+        soundOn: state.soundOn,
+        vibrateOn: state.vibrateOn,
+        keepAwake: state.keepAwake,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+    } catch (e) { console.error('Save failed', e); }
+  }
+
+  function loadLog() {
+    try {
+      const raw = localStorage.getItem(LOG_KEY);
+      if (raw) matchLog = JSON.parse(raw) || [];
+    } catch (e) { matchLog = []; }
+  }
+
+  function saveLog() {
+    try { localStorage.setItem(LOG_KEY, JSON.stringify(matchLog)); }
+    catch (e) { console.error('Log save failed', e); }
+  }
+
+  function logCurrentMatch() {
+    const playersWithTime = state.players
+      .filter(p => p.secondsPlayed > 0 || p.present)
+      .map(p => ({ name: p.name, secondsPlayed: p.secondsPlayed }));
+    if (state.matchSeconds === 0 && playersWithTime.every(p => p.secondsPlayed === 0)) {
+      return false; // ingenting å lagre
+    }
+    const entry = {
+      id: 'm' + Date.now(),
+      date: new Date().toISOString(),
+      opponent: (state.opponent || '').trim(),
+      scoreUs: state.scoreUs,
+      scoreThem: state.scoreThem,
+      durationSec: state.matchSeconds,
+      players: playersWithTime,
+    };
+    matchLog.unshift(entry); // nyeste først
+    saveLog();
+    return true;
+  }
+
+  // ---------- Helpers ----------
+  function fmtTime(sec) {
+    sec = Math.max(0, Math.round(sec));
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  }
+
+  function targetOnField() {
+    const diff = state.scoreUs - state.scoreThem;
+    if (state.auto44 && diff <= -4) return 4;
+    return 3;
+  }
+
+  function presentPlayers() {
+    return state.players.filter(p => p.present);
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => (
+      {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]
+    ));
+  }
+
+  function updateOpponentLabel() {
+    const lbl = document.getElementById('them-label');
+    if (!lbl) return;
+    const name = (state.opponent || '').trim();
+    lbl.textContent = name || 'Dem';
+  }
+
+  // ---------- Notifications ----------
+  let audioCtx = null;
+  function ensureAudio() {
+    if (!audioCtx) {
+      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+      catch (e) {}
+    }
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
+  function beep(freq, duration) {
+    if (!state.soundOn || !audioCtx) return;
+    try {
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.connect(g); g.connect(audioCtx.destination);
+      o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.2, audioCtx.currentTime + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+      o.start();
+      o.stop(audioCtx.currentTime + duration);
+    } catch (e) {}
+  }
+
+  function alertSub() {
+    ensureAudio();
+    beep(880, 0.2);
+    setTimeout(() => beep(660, 0.2), 220);
+    if (state.vibrateOn && navigator.vibrate) navigator.vibrate([200, 100, 200]);
+  }
+
+  function alertEnd() {
+    ensureAudio();
+    beep(660, 0.3);
+    setTimeout(() => beep(880, 0.3), 320);
+    setTimeout(() => beep(1000, 0.5), 640);
+    if (state.vibrateOn && navigator.vibrate) navigator.vibrate([300, 100, 300, 100, 500]);
+  }
+
+  // ---------- Wake lock ----------
+  async function requestWakeLock() {
+    if (!state.keepAwake) return;
+    if (!('wakeLock' in navigator)) return;
+    try {
+      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release', () => { wakeLock = null; });
+    } catch (e) { console.warn('Wake lock failed', e); }
+  }
+
+  function releaseWakeLock() {
+    if (wakeLock) {
+      wakeLock.release().catch(() => {});
+      wakeLock = null;
+    }
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && state.running && state.keepAwake) {
+      requestWakeLock();
+    }
+  });
+
+  // ---------- Render ----------
+  function render() {
+    document.getElementById('clock').textContent = fmtTime(state.matchSeconds);
+    document.getElementById('score-us').textContent = state.scoreUs;
+    document.getElementById('score-them').textContent = state.scoreThem;
+
+    const target = targetOnField();
+    const fb = document.getElementById('formation-badge');
+    fb.textContent = target === 4 ? '4v3' : '3v3';
+    fb.classList.toggle('alert', target === 4);
+
+    const hint = document.getElementById('diff-hint');
+    hint.innerHTML = target === 4 ? 'Ekstra spiller på' : '&nbsp;';
+
+    // On-field
+    const onField = state.players.filter(p => p.onField);
+    document.getElementById('on-count').textContent = onField.length + ' / ' + target;
+    const onContainer = document.getElementById('on-field');
+    if (state.players.length === 0) {
+      onContainer.innerHTML = '<div class="empty">Gå til <strong>Tropp</strong>-fanen for å legge til spillere</div>';
+    } else if (onField.length === 0) {
+      onContainer.innerHTML = '<div class="empty">Trykk på spillere på benken for å sette inn</div>';
+    } else {
+      onContainer.innerHTML = onField.map(p => `
+        <div class="player-card on-field" data-pid="${p.id}">
+          <div class="player-name">${escapeHtml(p.name)}</div>
+          <div class="player-time">⏱ ${fmtTime(p.secondsPlayed)}</div>
+        </div>
+      `).join('');
+    }
+
+    // Bench
+    const present = presentPlayers();
+    const bench = present.filter(p => !p.onField);
+    document.getElementById('bench-count').textContent = bench.length;
+    const benchContainer = document.getElementById('bench');
+    if (bench.length === 0) {
+      benchContainer.innerHTML = '<div class="empty">Ingen på benken</div>';
+    } else {
+      const sorted = [...bench].sort((a, b) => a.secondsPlayed - b.secondsPlayed);
+      const minTime = sorted[0]?.secondsPlayed ?? 0;
+      benchContainer.innerHTML = sorted.map(p => {
+        const isPriority = p.secondsPlayed === minTime && bench.length > 1;
+        return `
+          <div class="player-card${isPriority ? ' priority' : ''}" data-pid="${p.id}">
+            <div class="player-name">${escapeHtml(p.name)}</div>
+            <div class="player-time">⏱ ${fmtTime(p.secondsPlayed)}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    renderSubBanner();
+    renderSuggestion();
+  }
+
+  function renderSubBanner() {
+    const banner = document.getElementById('sub-banner');
+    const present = presentPlayers();
+    const target = targetOnField();
+    if (!state.running || present.length <= target) {
+      banner.classList.remove('show', 'due');
+      return;
+    }
+    banner.classList.add('show');
+    const intervalSec = state.subIntervalMin * 60;
+    const elapsed = state.matchSeconds - state.lastSubAt;
+    const remaining = Math.max(0, intervalSec - elapsed);
+    document.getElementById('sub-countdown').textContent = fmtTime(remaining);
+    banner.classList.toggle('due', remaining === 0);
+  }
+
+  // Bestem byttestrategi
+  // Returnerer: 'remove-extra' | 'full-line' | 'add-extra' | 'one-for-one'
+  function subStrategy() {
+    const target = targetOnField();
+    const present = presentPlayers();
+    const onField = state.players.filter(p => p.onField);
+    const bench = present.filter(p => !p.onField);
+
+    // For mange på banen ift target → ta av en
+    if (onField.length > target) {
+      return 'remove-extra';
+    }
+    if (target === 3 && onField.length === 3 && bench.length === 3) {
+      return 'full-line';
+    }
+    if (target === 4 && onField.length === 3 && bench.length >= 1) {
+      return 'add-extra';
+    }
+    return 'one-for-one';
+  }
+
+  function renderSuggestion() {
+    const box = document.getElementById('suggestion-box');
+    const present = presentPlayers();
+    const target = targetOnField();
+    const onField = state.players.filter(p => p.onField);
+    const bench = present.filter(p => !p.onField);
+
+    // Tilfellet: for mange på banen (gikk fra 4v3 til 3v3)
+    if (onField.length > target) {
+      box.classList.add('show');
+      const out = [...onField].sort((a, b) => b.secondsPlayed - a.secondsPlayed)[0];
+      document.getElementById('suggestion-text').innerHTML =
+        `Vi skal ned til ${target} på banen:<br>` +
+        `Ut: <strong>${escapeHtml(out.name)}</strong> (${fmtTime(out.secondsPlayed)})`;
+      return;
+    }
+
+    if (present.length <= target) { box.classList.remove('show'); return; }
+    if (onField.length === 0 || bench.length === 0) {
+      box.classList.remove('show'); return;
+    }
+    box.classList.add('show');
+
+    const strategy = subStrategy();
+
+    if (strategy === 'full-line') {
+      const outNames = onField.map(p => `<strong>${escapeHtml(p.name)}</strong>`).join(', ');
+      const innNames = bench.map(p => `<strong>${escapeHtml(p.name)}</strong>`).join(', ');
+      document.getElementById('suggestion-text').innerHTML =
+        `Bytt hele linja:<br>Ut: ${outNames}<br>Inn: ${innNames}`;
+    } else if (strategy === 'add-extra') {
+      const inn = [...bench].sort((a, b) => a.secondsPlayed - b.secondsPlayed)[0];
+      document.getElementById('suggestion-text').innerHTML =
+        `Sett inn ekstra spiller (4v3):<br>` +
+        `Inn: <strong>${escapeHtml(inn.name)}</strong> (${fmtTime(inn.secondsPlayed)})`;
+    } else {
+      const out = [...onField].sort((a, b) => b.secondsPlayed - a.secondsPlayed)[0];
+      const inn = [...bench].sort((a, b) => a.secondsPlayed - b.secondsPlayed)[0];
+      document.getElementById('suggestion-text').innerHTML =
+        `Ut: <strong>${escapeHtml(out.name)}</strong> (${fmtTime(out.secondsPlayed)}) → ` +
+        `Inn: <strong>${escapeHtml(inn.name)}</strong> (${fmtTime(inn.secondsPlayed)})`;
+    }
+  }
+
+  function renderSquad() {
+    const container = document.getElementById('squad-list');
+    if (state.players.length === 0) {
+      container.innerHTML = '<div class="empty" style="margin-bottom: 12px;">Ingen spillere lagt til enda. Skriv inn navn under for å legge til de som skal være i troppen.</div>';
+      return;
+    }
+    container.innerHTML = state.players.map(p => `
+      <div class="player-row">
+        <label>
+          <input type="checkbox" data-attend="${p.id}" ${p.present ? 'checked' : ''} />
+          <span>${escapeHtml(p.name)}</span>
+        </label>
+        <span class="row-time">⏱ ${fmtTime(p.secondsPlayed)}</span>
+        <button class="danger" data-del="${p.id}" title="Fjern">×</button>
+      </div>
+    `).join('');
+  }
+
+  // ---------- Logg-rendering ----------
+  function fmtDate(iso) {
+    const d = new Date(iso);
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yy = d.getFullYear();
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mi = String(d.getMinutes()).padStart(2, '0');
+    return `${dd}.${mm}.${yy} kl. ${hh}:${mi}`;
+  }
+
+  function resultClass(us, them) {
+    if (us > them) return 'win';
+    if (us < them) return 'loss';
+    return 'draw';
+  }
+
+  function renderLog() {
+    // Sammendrag
+    const summary = document.getElementById('log-summary');
+    if (matchLog.length === 0) {
+      summary.style.display = 'none';
+    } else {
+      const wins = matchLog.filter(m => m.scoreUs > m.scoreThem).length;
+      const draws = matchLog.filter(m => m.scoreUs === m.scoreThem).length;
+      const losses = matchLog.filter(m => m.scoreUs < m.scoreThem).length;
+      summary.style.display = 'block';
+      summary.innerHTML = `
+        <div class="log-summary-grid">
+          <div class="stat"><div class="stat-num">${matchLog.length}</div><div class="stat-label">Kamper</div></div>
+          <div class="stat"><div class="stat-num" style="color: var(--accent);">${wins}</div><div class="stat-label">Seire</div></div>
+          <div class="stat"><div class="stat-num" style="color: var(--text-muted);">${draws}</div><div class="stat-label">Uavgjort</div></div>
+          <div class="stat"><div class="stat-num" style="color: var(--danger);">${losses}</div><div class="stat-label">Tap</div></div>
+        </div>
+      `;
+    }
+
+    // Liste
+    const container = document.getElementById('log-list');
+    if (matchLog.length === 0) {
+      container.innerHTML = '<div class="empty">Ingen loggførte kamper enda</div>';
+      return;
+    }
+    container.innerHTML = matchLog.map(m => {
+      const cls = resultClass(m.scoreUs, m.scoreThem);
+      const opp = (m.opponent || '').trim();
+      const playersHtml = (m.players || [])
+        .slice()
+        .sort((a, b) => b.secondsPlayed - a.secondsPlayed)
+        .map(p => `<div class="log-time-row"><span class="name">${escapeHtml(p.name)}</span><span class="time">${fmtTime(p.secondsPlayed)}</span></div>`)
+        .join('');
+      return `
+        <div class="log-entry" data-mid="${m.id}">
+          <div class="log-entry-head" data-toggle="${m.id}">
+            <div>
+              <div class="log-entry-date">${fmtDate(m.date)}</div>
+              ${opp ? `<div style="font-size: 14px; font-weight: 500; margin-top: 2px;">vs. ${escapeHtml(opp)}</div>` : ''}
+              <div style="font-size: 11px; color: var(--text-dim); margin-top: 2px;">Kamplengde: ${fmtTime(m.durationSec)}</div>
+            </div>
+            <div class="log-entry-result ${cls}">
+              ${m.scoreUs} – ${m.scoreThem}<span class="chev">▾</span>
+            </div>
+          </div>
+          <div class="log-entry-body">
+            ${playersHtml || '<div class="empty">Ingen spilletid registrert</div>'}
+            <div class="log-actions">
+              <button class="small" data-del-match="${m.id}">Slett</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function exportAll() {
+    const payload = {
+      app: 'byttesystem',
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      state: {
+        players: state.players.map(p => ({id: p.id, name: p.name, present: p.present})),
+        matchLengthMin: state.matchLengthMin,
+        subIntervalMin: state.subIntervalMin,
+        auto44: state.auto44,
+        soundOn: state.soundOn,
+        vibrateOn: state.vibrateOn,
+        keepAwake: state.keepAwake,
+      },
+      log: matchLog,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const today = new Date().toISOString().slice(0, 10);
+    a.download = `byttesystem_backup_${today}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+  }
+
+  function importAll(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (!data || data.app !== 'byttesystem') {
+          alert('Ugyldig fil. Forventet en byttesystem-backup.');
+          return;
+        }
+        const summary = [];
+        if (data.state && Array.isArray(data.state.players)) {
+          summary.push(`${data.state.players.length} spillere`);
+        }
+        if (Array.isArray(data.log)) {
+          summary.push(`${data.log.length} loggførte kamper`);
+        }
+        const msg = `Importere backup?\n\nInneholder: ${summary.join(', ') || 'ingen data'}\n\nDette overskriver nåværende tropp, innstillinger og logg.`;
+        if (!confirm(msg)) return;
+
+        if (data.state) {
+          state.players = (data.state.players || []).map(p => ({
+            id: p.id, name: p.name, present: p.present !== false,
+            secondsPlayed: 0, onField: false,
+          }));
+          state.matchLengthMin = data.state.matchLengthMin ?? 15;
+          state.subIntervalMin = data.state.subIntervalMin ?? 2;
+          state.auto44 = data.state.auto44 ?? true;
+          state.soundOn = data.state.soundOn ?? true;
+          state.vibrateOn = data.state.vibrateOn ?? true;
+          state.keepAwake = data.state.keepAwake ?? false;
+        }
+        if (Array.isArray(data.log)) {
+          matchLog = data.log;
+        }
+        saveState();
+        saveLog();
+
+        // Oppdater UI
+        document.getElementById('match-length').value = state.matchLengthMin;
+        document.getElementById('match-length-out').textContent = state.matchLengthMin + ' min';
+        document.getElementById('sub-interval').value = state.subIntervalMin;
+        document.getElementById('sub-interval-out').textContent = state.subIntervalMin + ' min';
+        document.getElementById('auto-44').checked = state.auto44;
+        document.getElementById('sound-on').checked = state.soundOn;
+        document.getElementById('vibrate-on').checked = state.vibrateOn;
+        document.getElementById('keep-awake').checked = state.keepAwake;
+
+        renderSquad();
+        renderLog();
+        render();
+        alert('Backup importert.');
+      } catch (err) {
+        alert('Kunne ikke lese fil: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function exportCSV() {    if (matchLog.length === 0) {
+      alert('Ingen kamper å eksportere');
+      return;
+    }
+    const rows = [['Dato', 'Motstander', 'Resultat oss', 'Resultat motstander', 'Kamplengde (s)', 'Spiller', 'Spilletid (s)']];
+    matchLog.forEach(m => {
+      const opp = m.opponent || '';
+      if (!m.players || m.players.length === 0) {
+        rows.push([fmtDate(m.date), opp, m.scoreUs, m.scoreThem, m.durationSec, '', '']);
+      } else {
+        m.players.forEach(p => {
+          rows.push([fmtDate(m.date), opp, m.scoreUs, m.scoreThem, m.durationSec, p.name, p.secondsPlayed]);
+        });
+      }
+    });
+    const csv = rows.map(r => r.map(cell => {
+      const s = String(cell);
+      if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+        return '"' + s.replace(/"/g, '""') + '"';
+      }
+      return s;
+    }).join(',')).join('\n');
+    // BOM for Excel/Norwegian chars
+    const blob = new Blob(['\uFEFF' + csv], {type: 'text/csv;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const today = new Date().toISOString().slice(0, 10);
+    a.download = `kamplogg_${today}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+  }
+
+  // ---------- Tick ----------
+  function tick() {
+    if (!state.running) return;
+    const now = Date.now();
+    let delta = 1;
+    if (lastTickMs !== null) delta = Math.round((now - lastTickMs) / 1000);
+    if (delta < 1) delta = 1;
+    if (delta > 5) delta = 5; // cap if tab was suspended
+    lastTickMs = now;
+
+    state.matchSeconds += delta;
+    state.players.forEach(p => { if (p.onField) p.secondsPlayed += delta; });
+
+    // End of match
+    if (state.matchSeconds >= state.matchLengthMin * 60 && !state.matchEnded) {
+      state.matchEnded = true;
+      state.matchSeconds = state.matchLengthMin * 60;
+      pauseClock();
+      alertEnd();
+      showEndModal();
+      render();
+      return;
+    }
+
+    // Sub interval
+    const intervalSec = state.subIntervalMin * 60;
+    const elapsed = state.matchSeconds - state.lastSubAt;
+    if (elapsed >= intervalSec && presentPlayers().length > targetOnField()) {
+      // Only alert once per interval — bump lastSubAt to current
+      // The user must do the sub manually, but we re-arm from now
+      const armed = (intervalSec * Math.floor(state.matchSeconds / intervalSec));
+      if (armed > state.lastSubAt) {
+        alertSub();
+        state.lastSubAt = armed;
+      }
+    }
+    render();
+    renderSquad();
+  }
+
+  function startClock() {
+    if (state.running || state.matchEnded) {
+      if (state.matchEnded) return;
+    }
+    state.running = true;
+    lastTickMs = Date.now();
+    if (!tickInterval) tickInterval = setInterval(tick, 1000);
+    ensureAudio();
+    requestWakeLock();
+    document.getElementById('btn-start').textContent = 'Kjører';
+    render();
+  }
+
+  function pauseClock() {
+    state.running = false;
+    if (tickInterval) { clearInterval(tickInterval); tickInterval = null; }
+    lastTickMs = null;
+    releaseWakeLock();
+    document.getElementById('btn-start').textContent = 'Start';
+    render();
+  }
+
+  function resetClock() {
+    pauseClock();
+    state.matchSeconds = 0;
+    state.lastSubAt = 0;
+    state.scoreUs = 0;
+    state.scoreThem = 0;
+    state.opponent = '';
+    state.matchEnded = false;
+    state.players.forEach(p => { p.secondsPlayed = 0; p.onField = false; });
+    const opp = document.getElementById('opponent-name');
+    if (opp) opp.value = '';
+    updateOpponentLabel();
+    render();
+    renderSquad();
+  }
+
+  // ---------- Actions ----------
+  function togglePlayer(pid) {
+    const p = state.players.find(x => x.id === pid);
+    if (!p || !p.present) return;
+    const target = targetOnField();
+    const onCount = state.players.filter(x => x.onField).length;
+    if (p.onField) {
+      // Alltid lov til å ta av en spiller
+      p.onField = false;
+    } else {
+      // Sette inn: bare hvis det er ledig plass på banen
+      if (onCount >= target) {
+        flashHint('Banen er full. Ta først av en spiller.');
+        return;
+      }
+      p.onField = true;
+    }
+    render();
+  }
+
+  let hintTimer = null;
+  function flashHint(msg) {
+    let el = document.getElementById('flash-hint');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'flash-hint';
+      el.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:var(--radius);font-size:14px;font-weight:500;z-index:200;box-shadow:0 4px 12px rgba(0,0,0,0.2);opacity:0;transition:opacity 0.2s;pointer-events:none;max-width:90%;text-align:center;';
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.style.opacity = '1';
+    if (hintTimer) clearTimeout(hintTimer);
+    hintTimer = setTimeout(() => { el.style.opacity = '0'; }, 2500);
+  }
+
+  function doSubNow() {
+    const onField = state.players.filter(p => p.onField);
+    const bench = presentPlayers().filter(p => !p.onField);
+    const target = targetOnField();
+
+    // Tilfellet: for mange på banen (gikk fra 4v3 til 3v3)
+    if (onField.length > target) {
+      const out = [...onField].sort((a, b) => b.secondsPlayed - a.secondsPlayed)[0];
+      if (out) out.onField = false;
+      state.lastSubAt = state.matchSeconds;
+      render();
+      return;
+    }
+
+    if (onField.length === 0 || bench.length === 0) return;
+
+    const strategy = subStrategy();
+
+    if (strategy === 'full-line') {
+      onField.forEach(p => p.onField = false);
+      bench.forEach(p => p.onField = true);
+    } else if (strategy === 'add-extra') {
+      const inn = [...bench].sort((a, b) => a.secondsPlayed - b.secondsPlayed)[0];
+      inn.onField = true;
+    } else {
+      const out = [...onField].sort((a, b) => b.secondsPlayed - a.secondsPlayed)[0];
+      const inn = [...bench].sort((a, b) => a.secondsPlayed - b.secondsPlayed)[0];
+      out.onField = false;
+      inn.onField = true;
+    }
+    state.lastSubAt = state.matchSeconds;
+    render();
+  }
+
+  function addPlayer(name) {
+    name = (name || '').trim();
+    if (!name) return;
+    const id = 'p' + Date.now();
+    state.players.push({id, name, present: true, secondsPlayed: 0, onField: false});
+    saveState();
+    renderSquad();
+    render();
+  }
+
+  function removePlayer(pid) {
+    state.players = state.players.filter(p => p.id !== pid);
+    saveState();
+    renderSquad();
+    render();
+  }
+
+  function setAttend(pid, val) {
+    const p = state.players.find(x => x.id === pid);
+    if (!p) return;
+    p.present = val;
+    if (!val) p.onField = false;
+    saveState();
+    renderSquad();
+    render();
+  }
+
+  function showEndModal() {
+    const summary = document.getElementById('end-summary');
+    const playedList = state.players
+      .filter(p => p.present || p.secondsPlayed > 0)
+      .sort((a, b) => b.secondsPlayed - a.secondsPlayed);
+    const opp = (state.opponent || '').trim();
+    const resultLabel = opp ? `Resultat vs. ${escapeHtml(opp)}` : 'Resultat';
+    let html = `<div><strong>${resultLabel}</strong><span>${state.scoreUs} – ${state.scoreThem}</span></div>`;
+    playedList.forEach(p => {
+      html += `<div><span>${escapeHtml(p.name)}</span><span>${fmtTime(p.secondsPlayed)}</span></div>`;
+    });
+    summary.innerHTML = html;
+    document.getElementById('end-modal').classList.add('show');
+  }
+
+  // ---------- Wire up ----------
+  function wireUp() {
+    // Tabs
+    document.querySelectorAll('.tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Clock
+    document.getElementById('btn-start').addEventListener('click', startClock);
+    document.getElementById('btn-pause').addEventListener('click', pauseClock);
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      if (confirm('Nullstille kampen? Spilletid og resultat slettes.')) resetClock();
+    });
+
+    // Score
+    document.querySelectorAll('[data-score]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const which = btn.dataset.score;
+        const delta = parseInt(btn.dataset.delta, 10);
+        if (which === 'us') state.scoreUs = Math.max(0, state.scoreUs + delta);
+        else state.scoreThem = Math.max(0, state.scoreThem + delta);
+        render();
+      });
+    });
+
+    // Player click
+    document.addEventListener('click', (e) => {
+      const card = e.target.closest('.player-card');
+      if (card && card.dataset.pid) togglePlayer(card.dataset.pid);
+    });
+
+    // Sub now
+    document.getElementById('btn-do-sub').addEventListener('click', doSubNow);
+
+    // Squad
+    document.getElementById('btn-add-player').addEventListener('click', () => {
+      const inp = document.getElementById('new-player');
+      addPlayer(inp.value);
+      inp.value = '';
+      inp.focus();
+    });
+    document.getElementById('new-player').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') document.getElementById('btn-add-player').click();
+    });
+    document.addEventListener('change', (e) => {
+      if (e.target.matches('[data-attend]')) {
+        setAttend(e.target.dataset.attend, e.target.checked);
+      }
+    });
+    document.addEventListener('click', (e) => {
+      const delBtn = e.target.closest('[data-del]');
+      if (delBtn) {
+        const pid = delBtn.dataset.del;
+        const p = state.players.find(x => x.id === pid);
+        if (confirm('Fjerne ' + (p?.name || 'spiller') + '?')) removePlayer(pid);
+      }
+    });
+
+    // Long-press on player row to rename
+    let pressTimer = null;
+    document.getElementById('squad-list').addEventListener('click', (e) => {
+      if (e.target.closest('input, button')) return;
+      const row = e.target.closest('.player-row');
+      if (!row) return;
+      const cb = row.querySelector('[data-attend]');
+      if (!cb) return;
+      // Tap on name area: offer rename via prompt
+      if (e.target.tagName === 'SPAN' && !e.target.classList.contains('row-time')) {
+        const pid = cb.dataset.attend;
+        const p = state.players.find(x => x.id === pid);
+        if (!p) return;
+        const newName = prompt('Endre navn:', p.name);
+        if (newName !== null && newName.trim()) {
+          p.name = newName.trim();
+          saveState();
+          renderSquad();
+          render();
+        }
+      }
+    });
+
+    document.getElementById('btn-check-all').addEventListener('click', () => {
+      state.players.forEach(p => p.present = true);
+      saveState(); renderSquad(); render();
+    });
+    document.getElementById('btn-uncheck-all').addEventListener('click', () => {
+      state.players.forEach(p => { p.present = false; p.onField = false; });
+      saveState(); renderSquad(); render();
+    });
+    document.getElementById('btn-reset-times').addEventListener('click', () => {
+      if (confirm('Nullstille all spilletid?')) {
+        state.players.forEach(p => p.secondsPlayed = 0);
+        renderSquad(); render();
+      }
+    });
+
+    // Settings
+    const matchLen = document.getElementById('match-length');
+    const matchLenOut = document.getElementById('match-length-out');
+    matchLen.value = state.matchLengthMin;
+    matchLenOut.textContent = state.matchLengthMin + ' min';
+    matchLen.addEventListener('input', () => {
+      state.matchLengthMin = parseInt(matchLen.value, 10);
+      matchLenOut.textContent = state.matchLengthMin + ' min';
+      saveState();
+    });
+
+    const subInt = document.getElementById('sub-interval');
+    const subIntOut = document.getElementById('sub-interval-out');
+    subInt.value = state.subIntervalMin;
+    subIntOut.textContent = state.subIntervalMin + ' min';
+    subInt.addEventListener('input', () => {
+      state.subIntervalMin = parseInt(subInt.value, 10);
+      subIntOut.textContent = state.subIntervalMin + ' min';
+      saveState();
+      render();
+    });
+
+    const auto44 = document.getElementById('auto-44');
+    auto44.checked = state.auto44;
+    auto44.addEventListener('change', () => {
+      state.auto44 = auto44.checked; saveState(); render();
+    });
+
+    const soundOn = document.getElementById('sound-on');
+    soundOn.checked = state.soundOn;
+    soundOn.addEventListener('change', () => {
+      state.soundOn = soundOn.checked; saveState();
+      if (state.soundOn) ensureAudio();
+    });
+
+    const vibrateOn = document.getElementById('vibrate-on');
+    vibrateOn.checked = state.vibrateOn;
+    vibrateOn.addEventListener('change', () => {
+      state.vibrateOn = vibrateOn.checked; saveState();
+    });
+
+    const keepAwake = document.getElementById('keep-awake');
+    keepAwake.checked = state.keepAwake;
+    keepAwake.addEventListener('change', () => {
+      state.keepAwake = keepAwake.checked;
+      saveState();
+      if (state.keepAwake && state.running) requestWakeLock();
+      else releaseWakeLock();
+    });
+
+    // End modal
+    document.getElementById('btn-close-modal').addEventListener('click', () => {
+      document.getElementById('end-modal').classList.remove('show');
+    });
+
+    // Motstander
+    const opponentInput = document.getElementById('opponent-name');
+    opponentInput.value = state.opponent || '';
+    updateOpponentLabel();
+    opponentInput.addEventListener('input', () => {
+      state.opponent = opponentInput.value;
+      updateOpponentLabel();
+    });
+    document.getElementById('btn-new-match').addEventListener('click', () => {
+      logCurrentMatch();
+      renderLog();
+      document.getElementById('end-modal').classList.remove('show');
+      resetClock();
+    });
+
+    // Logg
+    document.getElementById('btn-log-current').addEventListener('click', () => {
+      const ok = logCurrentMatch();
+      if (ok) {
+        renderLog();
+        alert('Kampen er loggført');
+      } else {
+        alert('Ingen spilletid å loggføre');
+      }
+    });
+    document.getElementById('btn-clear-log').addEventListener('click', () => {
+      if (matchLog.length === 0) return;
+      if (confirm(`Slette alle ${matchLog.length} loggførte kamper? Dette kan ikke angres.`)) {
+        matchLog = [];
+        saveLog();
+        renderLog();
+      }
+    });
+    document.getElementById('btn-export-csv').addEventListener('click', exportCSV);
+
+    // Backup
+    document.getElementById('btn-export-all').addEventListener('click', exportAll);
+    document.getElementById('btn-import-all').addEventListener('click', () => {
+      document.getElementById('import-file').click();
+    });
+    document.getElementById('import-file').addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) importAll(file);
+      e.target.value = ''; // reset så samme fil kan velges igjen
+    });
+
+    // Toggle expand på loggoppføring + slett
+    document.getElementById('log-list').addEventListener('click', (e) => {
+      const delBtn = e.target.closest('[data-del-match]');
+      if (delBtn) {
+        const mid = delBtn.dataset.delMatch;
+        const m = matchLog.find(x => x.id === mid);
+        if (confirm(`Slette kamp fra ${m ? fmtDate(m.date) : '?'}?`)) {
+          matchLog = matchLog.filter(x => x.id !== mid);
+          saveLog();
+          renderLog();
+        }
+        return;
+      }
+      const head = e.target.closest('[data-toggle]');
+      if (head) {
+        const entry = head.closest('.log-entry');
+        if (entry) entry.classList.toggle('expanded');
+      }
+    });
+  }
+
+  // ---------- Init ----------
+  loadState();
+  loadLog();
+  wireUp();
+  renderSquad();
+  renderLog();
+  render();
+
+  // Ved første kjøring (tom tropp): naviger til Tropp-fanen
+  if (state.isFirstRun || state.players.length === 0) {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    document.querySelector('.tab[data-tab="squad"]').classList.add('active');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-squad').classList.add('active');
+  }
+})();
+</script>
+</body>
+</html>
