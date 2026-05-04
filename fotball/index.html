@@ -439,7 +439,20 @@
         }
         noteEl.textContent = noteText;
 
-        document.getElementById('regenerateBtn').style.display = 'inline-block';
+        const regenBtn = document.getElementById('regenerateBtn');
+        regenBtn.style.display = 'inline-block';
+
+        // Grønn flash-tilbakemelding når brukeren trykker "Generer på nytt"
+        if (shuffle) {
+          const original = regenBtn.textContent;
+          regenBtn.textContent = '✓ Nytt oppsett!';
+          regenBtn.classList.add('success');
+          setTimeout(() => {
+            regenBtn.textContent = original;
+            regenBtn.classList.remove('success');
+          }, 2000);
+        }
+
         document.querySelector('.table-wrap').scrollIntoView({ behavior: 'smooth' });
       } catch (err) {
         console.error(err);
