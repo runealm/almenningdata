@@ -595,6 +595,7 @@ input[type="text"]:focus, input[type="number"]:focus {
         <div class="clock-buttons">
           <button id="btn-start" class="primary">Start</button>
           <button id="btn-pause">Pause</button>
+          <button id="btn-end-match">Avslutt</button>
           <button id="btn-reset">Nullstill</button>
         </div>
       </div>
@@ -676,8 +677,10 @@ input[type="text"]:focus, input[type="number"]:focus {
       <p style="font-size: 14px; color: var(--text-muted); margin: 0;">
         Loggførte kamper.
       </p>
-      <div style="display: flex; gap: 6px;">
-        <button id="btn-export-csv" class="small">Eksporter CSV</button>
+      <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+        <button id="btn-share-csv" class="small">Del</button>
+        <button id="btn-copy-csv" class="small">Kopier</button>
+        <button id="btn-download-csv" class="small">Last ned</button>
       </div>
     </div>
 
@@ -691,7 +694,11 @@ input[type="text"]:focus, input[type="number"]:focus {
     </div>
 
     <div class="note">
-      Kamper lagres automatisk når du trykker "Ny kamp" etter sluttsignalet, eller manuelt med knappen over. CSV egner seg for Excel/regneark – for full backup bruk "Last ned backup" på Innstillinger-fanen.
+      Kamper lagres når du trykker "Avslutt" på kamp-fanen og deretter "Ny kamp" i dialogen som dukker opp. Du kan også trykke "Loggfør nåværende kamp" når som helst for å lagre uten å nullstille.<br><br>
+      <strong style="color: var(--text); font-weight: 600;">Del:</strong> sender CSV til e-post, AirDrop, meldinger m.m. via systemets delingsark.<br>
+      <strong style="color: var(--text); font-weight: 600;">Kopier:</strong> kopierer alle kamper som tabell – lim inn i e-post eller regneark.<br>
+      <strong style="color: var(--text); font-weight: 600;">Last ned:</strong> lagrer som .csv-fil for Excel/regneark.<br><br>
+      For full backup (inkludert tropp og innstillinger) bruk "Del backup" på Innstillinger-fanen.
     </div>
   </div>
 
@@ -709,7 +716,7 @@ input[type="text"]:focus, input[type="number"]:focus {
     <div class="setting">
       <label>Bytteintervall</label>
       <div class="setting-row">
-        <input id="sub-interval" type="range" min="1" max="5" step="1" value="2" />
+        <input id="sub-interval" type="range" min="1" max="5" step="0.5" value="2" />
         <span id="sub-interval-out" class="setting-value">2 min</span>
       </div>
     </div>
@@ -745,10 +752,10 @@ input[type="text"]:focus, input[type="number"]:focus {
     <div class="setting" style="border-top: 1px solid var(--border); padding-top: 16px;">
       <label>Sikkerhetskopi</label>
       <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 10px;">
-        Last ned alt (tropp, innstillinger, logg) som én fil. Kan importeres på en annen enhet eller hvis dataene forsvinner.
+        Hele tilstanden (tropp, innstillinger, logg) som én fil. Bruk "Del" for å sende til e-post, AirDrop, iCloud Drive m.m. Kan importeres på en annen enhet eller hvis dataene forsvinner.
       </p>
       <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-        <button id="btn-export-all" class="small">Last ned backup</button>
+        <button id="btn-export-all" class="small">Del backup</button>
         <button id="btn-import-all" class="small">Importer backup</button>
         <input id="import-file" type="file" accept=".json,application/json" style="display: none;" />
       </div>
@@ -776,6 +783,18 @@ input[type="text"]:focus, input[type="number"]:focus {
   </div>
 </div>
 
+<!-- Målscorer-modal -->
+<div id="scorer-modal" class="modal-bg">
+  <div class="modal">
+    <h2 style="font-size: 18px;">Hvem scoret?</h2>
+    <div id="scorer-list" style="display: flex; flex-direction: column; gap: 6px; margin: 12px 0;"></div>
+    <div style="display: flex; gap: 8px;">
+      <button id="btn-skip-scorer" style="flex: 1;">Hopp over</button>
+      <button id="btn-cancel-scorer" class="primary" style="flex: 1;">Avbryt mål</button>
+    </div>
+  </div>
+</div>
+
 <script>
 (function() {
   'use strict';
@@ -791,6 +810,7 @@ input[type="text"]:focus, input[type="number"]:focus {
     scoreUs: 0,
     scoreThem: 0,
     opponent: '',
+    goals: [], // [{scorerId, scorerName, matchSec}]
     matchLengthMin: 15,
     subIntervalMin: 2,
     auto44: true,
@@ -875,6 +895,7 @@ input[type="text"]:focus, input[type="number"]:focus {
       scoreThem: state.scoreThem,
       durationSec: state.matchSeconds,
       players: playersWithTime,
+      goals: state.goals.slice(),
     };
     matchLog.unshift(entry); // nyeste først
     saveLog();
@@ -910,6 +931,39 @@ input[type="text"]:focus, input[type="number"]:focus {
     if (!lbl) return;
     const name = (state.opponent || '').trim();
     lbl.textContent = name || 'Dem';
+  }
+
+  function fmtInterval(min) {
+    const mins = Math.floor(min);
+    const secs = Math.round((min - mins) * 60);
+    if (secs === 0) return mins + ' min';
+    return mins + ' min ' + secs + ' sek';
+  }
+
+  function openScorerModal() {
+    const list = document.getElementById('scorer-list');
+    const onField = state.players.filter(p => p.onField);
+    if (onField.length === 0) {
+      // Ingen på banen – bare tell målet uten scorer
+      state.scoreUs++;
+      state.goals.push({scorerId: null, scorerName: null, matchSec: state.matchSeconds});
+      render();
+      return;
+    }
+    list.innerHTML = onField.map(p => {
+      const count = state.goals.filter(g => g.scorerId === p.id).length;
+      const countBadge = count > 0 ? ` <span style="color: var(--text-muted); font-size: 12px;">(${count} hittil)</span>` : '';
+      return `
+        <button data-scorer-id="${p.id}" style="text-align: left; padding: 12px 14px; font-size: 15px;">
+          ${escapeHtml(p.name)}${countBadge}
+        </button>
+      `;
+    }).join('');
+    document.getElementById('scorer-modal').classList.add('show');
+  }
+
+  function closeScorerModal() {
+    document.getElementById('scorer-modal').classList.remove('show');
   }
 
   // ---------- Notifications ----------
@@ -1176,11 +1230,30 @@ input[type="text"]:focus, input[type="number"]:focus {
     container.innerHTML = matchLog.map(m => {
       const cls = resultClass(m.scoreUs, m.scoreThem);
       const opp = (m.opponent || '').trim();
+
+      // Målscorere oppsummert
+      let scorersHtml = '';
+      if (Array.isArray(m.goals) && m.goals.length > 0) {
+        const counts = {};
+        m.goals.forEach(g => {
+          const key = g.scorerName || '(ukjent)';
+          counts[key] = (counts[key] || 0) + 1;
+        });
+        const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+        scorersHtml = '<div style="padding: 8px 0 4px; font-weight: 600; font-size: 13px;">Målscorere</div>' +
+          entries.map(([name, count]) =>
+            `<div class="log-time-row"><span class="name">${escapeHtml(name)}</span><span class="time">${count} mål</span></div>`
+          ).join('');
+      }
+
       const playersHtml = (m.players || [])
         .slice()
         .sort((a, b) => b.secondsPlayed - a.secondsPlayed)
         .map(p => `<div class="log-time-row"><span class="name">${escapeHtml(p.name)}</span><span class="time">${fmtTime(p.secondsPlayed)}</span></div>`)
         .join('');
+
+      const spilletidHeader = playersHtml ? '<div style="padding: 8px 0 4px; font-weight: 600; font-size: 13px;">Spilletid</div>' : '';
+
       return `
         <div class="log-entry" data-mid="${m.id}">
           <div class="log-entry-head" data-toggle="${m.id}">
@@ -1194,6 +1267,8 @@ input[type="text"]:focus, input[type="number"]:focus {
             </div>
           </div>
           <div class="log-entry-body">
+            ${scorersHtml}
+            ${spilletidHeader}
             ${playersHtml || '<div class="empty">Ingen spilletid registrert</div>'}
             <div class="log-actions">
               <button class="small" data-del-match="${m.id}">Slett</button>
@@ -1204,7 +1279,7 @@ input[type="text"]:focus, input[type="number"]:focus {
     }).join('');
   }
 
-  function exportAll() {
+  async function exportAll() {
     const payload = {
       app: 'byttesystem',
       version: 1,
@@ -1220,12 +1295,32 @@ input[type="text"]:focus, input[type="number"]:focus {
       },
       log: matchLog,
     };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {type: 'application/json'});
+    const json = JSON.stringify(payload, null, 2);
+    const today = new Date().toISOString().slice(0, 10);
+    const filename = `byttesystem_backup_${today}.json`;
+
+    // Prøv å dele filen via systemets delingsark
+    try {
+      const file = new File([json], filename, {type: 'application/json'});
+      if (navigator.canShare && navigator.canShare({files: [file]})) {
+        await navigator.share({
+          files: [file],
+          title: 'Byttesystem backup',
+          text: 'Backup av tropp, innstillinger og kamplogg',
+        });
+        return;
+      }
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+      console.warn('File share failed', e);
+    }
+
+    // Fallback: last ned
+    const blob = new Blob([json], {type: 'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    const today = new Date().toISOString().slice(0, 10);
-    a.download = `byttesystem_backup_${today}.json`;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -1273,7 +1368,7 @@ input[type="text"]:focus, input[type="number"]:focus {
         document.getElementById('match-length').value = state.matchLengthMin;
         document.getElementById('match-length-out').textContent = state.matchLengthMin + ' min';
         document.getElementById('sub-interval').value = state.subIntervalMin;
-        document.getElementById('sub-interval-out').textContent = state.subIntervalMin + ' min';
+        document.getElementById('sub-interval-out').textContent = fmtInterval(state.subIntervalMin);
         document.getElementById('auto-44').checked = state.auto44;
         document.getElementById('sound-on').checked = state.soundOn;
         document.getElementById('vibrate-on').checked = state.vibrateOn;
@@ -1290,35 +1385,110 @@ input[type="text"]:focus, input[type="number"]:focus {
     reader.readAsText(file);
   }
 
-  function exportCSV() {    if (matchLog.length === 0) {
-      alert('Ingen kamper å eksportere');
-      return;
-    }
-    const rows = [['Dato', 'Motstander', 'Resultat oss', 'Resultat motstander', 'Kamplengde (s)', 'Spiller', 'Spilletid (s)']];
+  function buildCSV() {
+    const rows = [['Dato', 'Motstander', 'Resultat oss', 'Resultat motstander', 'Kamplengde (s)', 'Spiller', 'Spilletid (s)', 'Mål']];
     matchLog.forEach(m => {
       const opp = m.opponent || '';
+      const goalCounts = {};
+      (m.goals || []).forEach(g => {
+        const key = g.scorerName || '(ukjent)';
+        goalCounts[key] = (goalCounts[key] || 0) + 1;
+      });
       if (!m.players || m.players.length === 0) {
-        rows.push([fmtDate(m.date), opp, m.scoreUs, m.scoreThem, m.durationSec, '', '']);
+        rows.push([fmtDate(m.date), opp, m.scoreUs, m.scoreThem, m.durationSec, '', '', '']);
       } else {
         m.players.forEach(p => {
-          rows.push([fmtDate(m.date), opp, m.scoreUs, m.scoreThem, m.durationSec, p.name, p.secondsPlayed]);
+          const goals = goalCounts[p.name] || 0;
+          rows.push([fmtDate(m.date), opp, m.scoreUs, m.scoreThem, m.durationSec, p.name, p.secondsPlayed, goals]);
+        });
+        Object.keys(goalCounts).forEach(name => {
+          if (!m.players.some(p => p.name === name)) {
+            rows.push([fmtDate(m.date), opp, m.scoreUs, m.scoreThem, m.durationSec, name, '', goalCounts[name]]);
+          }
         });
       }
     });
-    const csv = rows.map(r => r.map(cell => {
+    return rows.map(r => r.map(cell => {
       const s = String(cell);
       if (s.includes(',') || s.includes('"') || s.includes('\n')) {
         return '"' + s.replace(/"/g, '""') + '"';
       }
       return s;
     }).join(',')).join('\n');
-    // BOM for Excel/Norwegian chars
+  }
+
+  function csvFilename() {
+    const today = new Date().toISOString().slice(0, 10);
+    return `kamplogg_${today}.csv`;
+  }
+
+  async function shareCSV() {
+    if (matchLog.length === 0) { alert('Ingen kamper å dele'); return; }
+    const csv = buildCSV();
+    const filename = csvFilename();
+    // Prøv først å dele som fil (åpner Mail/AirDrop/etc med vedlegg)
+    try {
+      const file = new File(['\uFEFF' + csv], filename, {type: 'text/csv'});
+      if (navigator.canShare && navigator.canShare({files: [file]})) {
+        await navigator.share({
+          files: [file],
+          title: 'Kamplogg',
+          text: `Kamplogg med ${matchLog.length} kamper`,
+        });
+        return;
+      }
+    } catch (e) {
+      if (e.name === 'AbortError') return; // brukeren avbrøt
+      console.warn('File share failed, trying text share', e);
+    }
+    // Fallback: del som tekst
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'Kamplogg',
+          text: csv,
+        });
+        return;
+      }
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+    }
+    // Siste utvei: last ned
+    downloadCSV();
+  }
+
+  async function copyCSV() {
+    if (matchLog.length === 0) { alert('Ingen kamper å kopiere'); return; }
+    const csv = buildCSV();
+    try {
+      await navigator.clipboard.writeText(csv);
+      flashHint('Kamplogg kopiert til utklippstavlen');
+    } catch (e) {
+      // Fallback for eldre nettlesere
+      const ta = document.createElement('textarea');
+      ta.value = csv;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        flashHint('Kamplogg kopiert til utklippstavlen');
+      } catch (err) {
+        alert('Kunne ikke kopiere. Bruk Last ned i stedet.');
+      }
+      document.body.removeChild(ta);
+    }
+  }
+
+  function downloadCSV() {
+    if (matchLog.length === 0) { alert('Ingen kamper å eksportere'); return; }
+    const csv = buildCSV();
     const blob = new Blob(['\uFEFF' + csv], {type: 'text/csv;charset=utf-8'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    const today = new Date().toISOString().slice(0, 10);
-    a.download = `kamplogg_${today}.csv`;
+    a.download = csvFilename();
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -1394,6 +1564,7 @@ input[type="text"]:focus, input[type="number"]:focus {
     state.scoreUs = 0;
     state.scoreThem = 0;
     state.opponent = '';
+    state.goals = [];
     state.matchEnded = false;
     state.players.forEach(p => { p.secondsPlayed = 0; p.onField = false; });
     const opp = document.getElementById('opponent-name');
@@ -1507,6 +1678,22 @@ input[type="text"]:focus, input[type="number"]:focus {
     const opp = (state.opponent || '').trim();
     const resultLabel = opp ? `Resultat vs. ${escapeHtml(opp)}` : 'Resultat';
     let html = `<div><strong>${resultLabel}</strong><span>${state.scoreUs} – ${state.scoreThem}</span></div>`;
+
+    // Målscorere
+    const scorerCounts = {};
+    state.goals.forEach(g => {
+      const key = g.scorerName || '(ukjent)';
+      scorerCounts[key] = (scorerCounts[key] || 0) + 1;
+    });
+    const scorerEntries = Object.entries(scorerCounts).sort((a, b) => b[1] - a[1]);
+    if (scorerEntries.length > 0) {
+      html += '<div style="padding-top: 8px;"><strong>Målscorere</strong><span></span></div>';
+      scorerEntries.forEach(([name, count]) => {
+        html += `<div><span>${escapeHtml(name)}</span><span>${count} mål</span></div>`;
+      });
+    }
+
+    html += '<div style="padding-top: 8px;"><strong>Spilletid</strong><span></span></div>';
     playedList.forEach(p => {
       html += `<div><span>${escapeHtml(p.name)}</span><span>${fmtTime(p.secondsPlayed)}</span></div>`;
     });
@@ -1532,16 +1719,59 @@ input[type="text"]:focus, input[type="number"]:focus {
     document.getElementById('btn-reset').addEventListener('click', () => {
       if (confirm('Nullstille kampen? Spilletid og resultat slettes.')) resetClock();
     });
+    document.getElementById('btn-end-match').addEventListener('click', () => {
+      if (state.matchSeconds === 0) {
+        alert('Ingen kamp å avslutte – klokka har ikke startet.');
+        return;
+      }
+      pauseClock();
+      state.matchEnded = true;
+      showEndModal();
+    });
 
     // Score
     document.querySelectorAll('[data-score]').forEach(btn => {
       btn.addEventListener('click', () => {
         const which = btn.dataset.score;
         const delta = parseInt(btn.dataset.delta, 10);
-        if (which === 'us') state.scoreUs = Math.max(0, state.scoreUs + delta);
-        else state.scoreThem = Math.max(0, state.scoreThem + delta);
+        if (which === 'us' && delta === 1) {
+          // Be om scorer
+          openScorerModal();
+          return;
+        }
+        if (which === 'us') {
+          // Minus: fjern siste mål (også fra goals)
+          if (state.scoreUs > 0) {
+            state.scoreUs--;
+            // Fjern det siste registrerte målet
+            if (state.goals.length > 0) state.goals.pop();
+          }
+        } else {
+          state.scoreThem = Math.max(0, state.scoreThem + delta);
+        }
         render();
       });
+    });
+
+    // Målscorer-modal
+    document.getElementById('btn-skip-scorer').addEventListener('click', () => {
+      // Telle mål uten scorer
+      state.scoreUs++;
+      state.goals.push({scorerId: null, scorerName: null, matchSec: state.matchSeconds});
+      closeScorerModal();
+      render();
+    });
+    document.getElementById('btn-cancel-scorer').addEventListener('click', closeScorerModal);
+    document.getElementById('scorer-list').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-scorer-id]');
+      if (!btn) return;
+      const pid = btn.dataset.scorerId;
+      const p = state.players.find(x => x.id === pid);
+      if (!p) return;
+      state.scoreUs++;
+      state.goals.push({scorerId: p.id, scorerName: p.name, matchSec: state.matchSeconds});
+      closeScorerModal();
+      render();
     });
 
     // Player click
@@ -1629,10 +1859,10 @@ input[type="text"]:focus, input[type="number"]:focus {
     const subInt = document.getElementById('sub-interval');
     const subIntOut = document.getElementById('sub-interval-out');
     subInt.value = state.subIntervalMin;
-    subIntOut.textContent = state.subIntervalMin + ' min';
+    subIntOut.textContent = fmtInterval(state.subIntervalMin);
     subInt.addEventListener('input', () => {
-      state.subIntervalMin = parseInt(subInt.value, 10);
-      subIntOut.textContent = state.subIntervalMin + ' min';
+      state.subIntervalMin = parseFloat(subInt.value);
+      subIntOut.textContent = fmtInterval(state.subIntervalMin);
       saveState();
       render();
     });
@@ -1703,7 +1933,9 @@ input[type="text"]:focus, input[type="number"]:focus {
         renderLog();
       }
     });
-    document.getElementById('btn-export-csv').addEventListener('click', exportCSV);
+    document.getElementById('btn-share-csv').addEventListener('click', shareCSV);
+    document.getElementById('btn-copy-csv').addEventListener('click', copyCSV);
+    document.getElementById('btn-download-csv').addEventListener('click', downloadCSV);
 
     // Backup
     document.getElementById('btn-export-all').addEventListener('click', exportAll);
