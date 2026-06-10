@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VM 2026 – Sendeprogram</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#0b1326;
+    --night-2:#121d3a;
+    --panel:#16213f;
+    --panel-2:#1b2950;
+    --line:#27345c;
+    --ink:#eaf0ff;
+    --muted:#93a0c4;
+    --norway:#ef2b2d;
+    --norway-soft:#ff5a5c;
+    --nrk:#00b1b0;
+    --tv2:#ffb000;
+    --gold:#f4c95d;
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(239,43,45,.18), transparent 60%),
+      radial-gradient(900px 500px at 0% 0%, rgba(0,177,176,.14), transparent 55%),
+      linear-gradient(180deg,var(--night),var(--night-2));
+    background-attachment:fixed;
+    min-height:100vh;
+    line-height:1.5;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:22px 18px 80px}
+
+  header{text-align:center;padding:30px 0 14px}
+  .kicker{font-family:'Oswald';letter-spacing:.28em;text-transform:uppercase;font-size:13px;color:var(--norway-soft);font-weight:600}
+  h1{font-family:'Oswald';font-weight:700;font-size:clamp(38px,9vw,76px);line-height:.92;margin:6px 0 4px;letter-spacing:-.5px}
+  h1 .yr{color:var(--gold)}
+  .sub{color:var(--muted);font-size:15px;max-width:560px;margin:8px auto 0}
+  .meta-row{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+  .meta-row .m{font-family:'Oswald';text-align:center}
+  .meta-row .m b{display:block;font-size:26px;line-height:1;color:var(--ink)}
+  .meta-row .m span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+  .controls{position:sticky;top:0;z-index:20;background:linear-gradient(180deg,rgba(11,19,38,.96),rgba(11,19,38,.82));backdrop-filter:blur(8px);padding:14px 0 12px;margin:18px 0 6px;border-bottom:1px solid var(--line)}
+  .search{position:relative;max-width:520px;margin:0 auto}
+  .search input{width:100%;padding:14px 44px 14px 44px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:16px;font-family:inherit;outline:none}
+  .search input:focus{border-color:var(--norway);box-shadow:0 0 0 3px rgba(239,43,45,.18)}
+  .search .ico{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:16px}
+  .search .clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--muted);font-size:20px;cursor:pointer;padding:6px;display:none}
+  .filters{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+  .chip{font-family:'Oswald';letter-spacing:.06em;font-size:13px;text-transform:uppercase;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;transition:.15s}
+  .chip:hover{color:var(--ink);border-color:var(--muted)}
+  .chip.active{background:var(--ink);color:var(--night);border-color:var(--ink);font-weight:600}
+  .chip[data-ch="NRK"].active{background:var(--nrk);border-color:var(--nrk);color:#03201f}
+  .chip[data-ch="TV2"].active{background:var(--tv2);border-color:var(--tv2);color:#2b1d00}
+
+  .todaybar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .today-btn{font-family:'Oswald';font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:14px;display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:999px;border:0;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--norway),#c81e20);box-shadow:0 6px 18px rgba(239,43,45,.35);transition:.15s}
+  .today-btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(239,43,45,.45)}
+  .today-btn.alt{background:linear-gradient(135deg,#c9a23a,#917019);box-shadow:0 6px 18px rgba(201,162,58,.32)}
+  .today-btn.alt:hover{box-shadow:0 10px 24px rgba(201,162,58,.44)}
+  #dayPanel{max-height:0;overflow:hidden;opacity:0;transition:max-height .4s ease,opacity .25s ease;margin:0 auto;max-width:640px}
+  #dayPanel.open{max-height:2600px;opacity:1;margin-top:16px}
+  .day-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+  .day-nav button{background:transparent;border:1px solid var(--line);color:var(--ink);width:42px;height:42px;border-radius:10px;font-size:16px;cursor:pointer;transition:.15s}
+  .day-nav button:hover{border-color:var(--norway);color:var(--norway-soft)}
+  .day-label{text-align:center;font-family:'Oswald';line-height:1.05}
+  .day-label span{display:block;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+  .day-label b{font-size:21px}
+  .day-today{display:block;margin:8px auto 0;background:none;border:0;color:var(--muted);font-size:12px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-family:'Oswald'}
+  .day-today:hover{color:var(--norway-soft)}
+  #dayList{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+  .drow{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:11px 13px}
+  .drow.no{border-color:rgba(239,43,45,.5);background:rgba(239,43,45,.07)}
+  .drow .dt{font-family:'Oswald';font-weight:700;font-size:18px;min-width:64px}
+  .drow .vs{flex:1;font-size:14.5px;line-height:1.25}
+  .drow .vs .grp{display:block;font-size:11px;color:var(--muted);letter-spacing:.04em;margin-top:2px}
+  .day-empty{background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:18px;color:var(--muted);font-size:14px;text-align:center;line-height:1.65}
+  .day-empty a{color:var(--norway-soft);font-weight:600;text-decoration:none;white-space:nowrap}
+
+  /* Tippeligaen */
+  #tipPanel{max-height:0;overflow:hidden;opacity:0;transition:max-height .4s ease,opacity .25s ease;margin:0 auto;max-width:680px}
+  #tipPanel.open{max-height:6000px;opacity:1;margin-top:16px}
+  .tip-toggle{display:flex;gap:8px;justify-content:center;margin-bottom:6px}
+  .tip-toggle .chip.active{background:var(--gold);border-color:var(--gold);color:#2b1d00}
+  .tip-head{font-family:'Oswald';font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:18px 2px 10px;display:flex;align-items:center;gap:10px}
+  .wtally{display:flex;flex-wrap:wrap;gap:8px}
+  .wpill{display:inline-flex;align-items:center;gap:7px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:14px}
+  .wpill b{font-family:'Oswald';color:var(--gold)}
+  .wpill .who{font-size:11.5px;color:var(--muted)}
+  .tmatch{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:10px}
+  .tmatch h4{font-family:'Oswald';font-weight:600;font-size:17px;margin:0 0 10px}
+  .tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:6px}
+  .tcell{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--panel-2);border:1px solid transparent;border-radius:8px;padding:7px 10px}
+  .tcell .nm{font-size:13px;color:var(--muted)}
+  .tcell .sc{font-family:'Oswald';font-weight:700;font-size:16px}
+  .tcell.me{border-color:var(--norway);background:rgba(239,43,45,.1)}
+  .tcell.me .nm{color:var(--norway-soft)}
+  .pcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:10px}
+  .pcard.me{border-color:var(--norway)}
+  .pcard h4{font-family:'Oswald';font-weight:600;font-size:17px;margin:0 0 8px;display:flex;align-items:center;gap:8px}
+  .pcard h4 .you{color:var(--gold);font-size:12px;font-family:'Inter';font-weight:600}
+  .prow{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:6px 0;border-bottom:1px dashed var(--line)}
+  .prow:last-child{border-bottom:0}
+  .prow .pm{color:var(--muted)}
+  .prow .ps{font-family:'Oswald';font-weight:700}
+  .tip-note{background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:14px;color:var(--muted);font-size:13px;text-align:center;margin-top:8px}
+
+  .section-title{font-family:'Oswald';text-transform:uppercase;letter-spacing:.16em;font-size:14px;color:var(--muted);margin:34px 0 14px;display:flex;align-items:center;gap:12px}
+  .section-title::after{content:"";height:1px;flex:1;background:var(--line)}
+
+  .no-matches{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+  .mcard{background:linear-gradient(160deg,var(--panel),var(--panel-2));border:1px solid var(--line);border-radius:var(--r);padding:16px;position:relative;overflow:hidden}
+  .mcard.no{border-color:rgba(239,43,45,.5)}
+  .mcard .when{font-family:'Oswald';font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+  .mcard .teams{font-family:'Oswald';font-weight:600;font-size:21px;margin:8px 0 4px;line-height:1.1}
+  .mcard .venue{font-size:12.5px;color:var(--muted)}
+  .mcard .row{display:flex;align-items:center;justify-content:space-between;margin-top:12px;gap:8px}
+  .mcard .time{font-family:'Oswald';font-size:30px;font-weight:700;line-height:1}
+  .mcard .time small{display:block;font-size:10.5px;letter-spacing:.1em;color:var(--muted);font-weight:500;text-transform:uppercase}
+  .badge{font-family:'Oswald';font-weight:600;font-size:13px;letter-spacing:.05em;padding:5px 11px;border-radius:7px;white-space:nowrap}
+  .badge.NRK{background:var(--nrk);color:#03201f}
+  .badge.TV2{background:var(--tv2);color:#2b1d00}
+  .badge.TBA{background:var(--line);color:var(--muted)}
+  .nightflag{position:absolute;top:10px;right:12px;font-size:11px;color:var(--norway-soft);font-family:'Oswald';letter-spacing:.08em}
+
+  .groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:12px}
+  .gcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 14px 8px;transition:.15s}
+  .gcard.dim{opacity:.22;filter:saturate(.4)}
+  .gcard.hit{border-color:var(--norway);box-shadow:0 0 0 1px var(--norway)}
+  .gcard h3{font-family:'Oswald';font-size:16px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 10px;color:var(--muted)}
+  .gcard h3 b{color:var(--ink)}
+  .team{display:flex;align-items:center;gap:9px;padding:7px 6px;border-radius:8px}
+  .team .fl{font-size:19px;width:24px;text-align:center}
+  .team .nm{font-size:14.5px}
+  .team.is-no{background:rgba(239,43,45,.14)}
+  .team.is-no .nm{color:var(--norway-soft);font-weight:600}
+  .team.match .nm{color:var(--gold);font-weight:600}
+  .where{font-size:11px;color:var(--muted);margin:8px 2px 4px;border-top:1px dashed var(--line);padding-top:8px}
+
+  .noresult{text-align:center;color:var(--muted);padding:30px;font-size:15px;display:none}
+
+  .ko{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+  .kocard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .kocard .rnd{font-family:'Oswald';font-weight:600;font-size:16px}
+  .kocard .dt{font-size:12.5px;color:var(--muted);margin:3px 0 10px}
+  .kocard .b{display:inline-block}
+
+  .note{background:rgba(244,201,93,.08);border:1px solid rgba(244,201,93,.32);border-radius:12px;padding:14px 16px;font-size:13.5px;color:#f3e2b8;margin:8px 0 4px}
+  .note b{color:var(--gold)}
+  .links{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:14px}
+  .lk{display:flex;flex-direction:column;gap:3px;text-decoration:none;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;transition:.15s}
+  .lk:hover{border-color:var(--norway);transform:translateY(-2px)}
+  .lk .t{font-family:'Oswald';font-weight:600;font-size:15px;color:var(--ink)}
+  .lk .d{font-size:12.5px;color:var(--muted)}
+  .lk .t .arr{color:var(--norway-soft)}
+
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:40px;line-height:1.7}
+
+  @media (max-width:520px){
+    .meta-row{gap:14px}
+    h1{font-size:clamp(40px,13vw,60px)}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">USA · Canada · Mexico</div>
+    <h1>Fotball-VM <span class="yr">2026</span></h1>
+    <p class="sub">Norge tilbake i VM for første gang siden 1998. Søk opp et land, filtrer på kanal, og finn ut når dere må sette på kaffetrakteren.</p>
+    <div class="meta-row">
+      <div class="m"><b>48</b><span>lag</span></div>
+      <div class="m"><b>104</b><span>kamper</span></div>
+      <div class="m"><b>16</b><span>arenaer</span></div>
+      <div class="m"><b>11.6–19.7</b><span>periode</span></div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="search">
+      <span class="ico">🔍</span>
+      <input id="q" type="text" placeholder="Søk etter land – f.eks. Norge, Frankrike, Brasil…" autocomplete="off">
+      <button class="clear" id="clear" aria-label="Tøm søk">×</button>
+    </div>
+    <div class="filters">
+      <button class="chip active" data-ch="ALLE">Alle kanaler</button>
+      <button class="chip" data-ch="NRK">NRK</button>
+      <button class="chip" data-ch="TV2">TV 2</button>
+    </div>
+    <div class="todaybar">
+      <button class="today-btn" id="todayBtn">📅 Dagens kamper</button>
+      <button class="today-btn alt" id="tipBtn">🏆 Tippeligaen</button>
+    </div>
+  </div>
+
+  <div id="dayPanel">
+    <div class="day-nav">
+      <button id="dayPrev" aria-label="Forrige dag">◀</button>
+      <div class="day-label"><span id="dayName"></span><b id="dayDate"></b></div>
+      <button id="dayNext" aria-label="Neste dag">▶</button>
+    </div>
+    <button class="day-today" id="dayToday">↺ Tilbake til i dag</button>
+    <div id="dayList"></div>
+  </div>
+
+  <div id="tipPanel">
+    <div class="tip-toggle">
+      <button class="chip active" data-view="kamp">Per kamp</button>
+      <button class="chip" data-view="person">Per person</button>
+    </div>
+    <div class="tip-head">🏆 Hvem vinner VM?</div>
+    <div class="wtally" id="winTally"></div>
+    <div class="tip-head" id="tipBodyHead">Kamptips</div>
+    <div id="tipBody"></div>
+    <div class="tip-note">Poeng og tabell kan legges på når resultatene begynner å komme inn — si fra om poengsystemet.</div>
+  </div>
+
+  <div class="section-title" id="t-no">🇳🇴 Norges kamper · Gruppe I</div>
+  <div class="no-matches" id="noMatches"></div>
+
+  <div class="section-title">Åpning &amp; finale</div>
+  <div class="no-matches" id="bigMatches"></div>
+
+  <div class="section-title" id="t-groups">Alle grupper</div>
+  <div class="groups" id="groups"></div>
+  <div class="noresult" id="noresult">Fant ingen lag som matcher søket. Prøv et annet navn.</div>
+
+  <div class="section-title" id="t-ko">Sluttspillet · lag avgjøres av gruppespillet</div>
+  <div class="ko" id="ko"></div>
+
+  <div class="section-title">Om dataene &amp; odds</div>
+  <div class="note">
+    <b>Komplett sendeskjema lagt inn:</b> alle 72 gruppekamper med norsk kampstart og kanal (NRK/TV 2),
+    pluss hele sluttspillet med datoer, tider og arena. I sluttspillet avgjøres lagene underveis, så der vises
+    hvilke gruppe- og rundeplasseringer som møtes. Kanal for 16-delsfinale, åttedelsfinale og kvartfinale følger
+    NRK/TV 2s rundefordeling. <b>Live-odds</b> svinger kontinuerlig og hentes derfor direkte hos Norsk Tipping.
+  </div>
+  <div class="links">
+    <a class="lk" href="https://www.norsk-tipping.no" target="_blank" rel="noopener">
+      <span class="t">Odds på VM-kampene <span class="arr">→</span></span>
+      <span class="d">Norsk Tipping – søk opp kampen for live-odds</span>
+    </a>
+    <a class="lk" href="https://www.nrk.no/sport/program-og-tv-guide-for-fotball-vm_-slik-ser-du-norges-kamper-pa-tv-1.17694535" target="_blank" rel="noopener">
+      <span class="t">Offisielt sendeskjema <span class="arr">→</span></span>
+      <span class="d">NRK – TV-guide for alle kampene</span>
+    </a>
+    <a class="lk" href="https://www.fotball.no/landslag/norge-a-herrer/vm-2026/" target="_blank" rel="noopener">
+      <span class="t">Alt om Norge i VM <span class="arr">→</span></span>
+      <span class="d">Norges Fotballforbund</span>
+    </a>
+  </div>
+
+  <footer>
+    Laget for hjemmesofaen · Alle tider er norsk tid · Kanaler: NRK og TV 2 sender gratis<br>
+    Kontroller alltid endelig kampstart mot offisielt sendeskjema før dere planlegger kvelden.
+  </footer>
+</div>
+
+<script>
+const FLAG = {
+  "Mexico":"🇲🇽","Sør-Afrika":"🇿🇦","Sør-Korea":"🇰🇷","Tsjekkia":"🇨🇿",
+  "Canada":"🇨🇦","Bosnia-Hercegovina":"🇧🇦","Qatar":"🇶🇦","Sveits":"🇨🇭",
+  "Brasil":"🇧🇷","Marokko":"🇲🇦","Haiti":"🇭🇹","Skottland":"🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+  "USA":"🇺🇸","Paraguay":"🇵🇾","Australia":"🇦🇺","Tyrkia":"🇹🇷",
+  "Tyskland":"🇩🇪","Curaçao":"🇨🇼","Elfenbenskysten":"🇨🇮","Ecuador":"🇪🇨",
+  "Nederland":"🇳🇱","Japan":"🇯🇵","Sverige":"🇸🇪","Tunisia":"🇹🇳",
+  "Belgia":"🇧🇪","Egypt":"🇪🇬","Iran":"🇮🇷","New Zealand":"🇳🇿",
+  "Spania":"🇪🇸","Kapp Verde":"🇨🇻","Saudi-Arabia":"🇸🇦","Uruguay":"🇺🇾",
+  "Frankrike":"🇫🇷","Senegal":"🇸🇳","Irak":"🇮🇶","Norge":"🇳🇴",
+  "Argentina":"🇦🇷","Algerie":"🇩🇿","Østerrike":"🇦🇹","Jordan":"🇯🇴",
+  "Portugal":"🇵🇹","DR Kongo":"🇨🇩","Usbekistan":"🇺🇿","Colombia":"🇨🇴",
+  "England":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Kroatia":"🇭🇷","Ghana":"🇬🇭","Panama":"🇵🇦"
+};
+
+const GROUPS = {
+  "A":{teams:["Mexico","Sør-Afrika","Sør-Korea","Tsjekkia"], where:"Mexico by, Guadalajara, Monterrey & Atlanta"},
+  "B":{teams:["Canada","Bosnia-Hercegovina","Qatar","Sveits"], where:"Toronto, Vancouver, San Francisco, Los Angeles & Seattle"},
+  "C":{teams:["Brasil","Marokko","Haiti","Skottland"], where:"New York, Boston, Philadelphia, Miami & Atlanta"},
+  "D":{teams:["USA","Paraguay","Australia","Tyrkia"], where:"Los Angeles, Vancouver, Seattle & San Francisco"},
+  "E":{teams:["Tyskland","Curaçao","Elfenbenskysten","Ecuador"], where:"Houston, Philadelphia, Toronto, Kansas City & New York"},
+  "F":{teams:["Nederland","Japan","Sverige","Tunisia"], where:"Dallas, Monterrey, Houston & Kansas City"},
+  "G":{teams:["Belgia","Egypt","Iran","New Zealand"], where:"Seattle, Los Angeles & Vancouver"},
+  "H":{teams:["Spania","Kapp Verde","Saudi-Arabia","Uruguay"], where:"Atlanta, Miami, Houston & Guadalajara"},
+  "I":{teams:["Frankrike","Senegal","Irak","Norge"], where:"New York, Boston, Philadelphia & Toronto"},
+  "J":{teams:["Argentina","Algerie","Østerrike","Jordan"], where:"Kansas City, San Francisco & Dallas"},
+  "K":{teams:["Portugal","DR Kongo","Usbekistan","Colombia"], where:"Houston, Mexico by, Guadalajara & Miami"},
+  "L":{teams:["England","Kroatia","Ghana","Panama"], where:"Dallas, Toronto, Boston, New York & Philadelphia"}
+};
+
+// Norges kamper (kuratert visning)
+const NO_MATCHES = [
+  {when:"Tirsdag 17. juni", teams:["Irak","Norge"], time:"00:00", note:"natt til ons.", venue:"Boston", ch:"TV2", night:true},
+  {when:"Mandag 23. juni", teams:["Norge","Senegal"], time:"02:00", note:"natt til man.", venue:"New York", ch:"NRK", night:true},
+  {when:"Fredag 26. juni", teams:["Norge","Frankrike"], time:"21:00", note:"beste sendetid", venue:"Boston", ch:"NRK", night:false}
+];
+
+const BIG_MATCHES = [
+  {when:"Torsdag 11. juni · Åpningskamp", teams:["Mexico","Sør-Afrika"], time:"21:00", note:"VM sparkes i gang", venue:"Mexico by", ch:"TV2", night:false},
+  {when:"Søndag 19. juli · Finalen", teams:["?","?"], time:"21:00", note:"avgjøres underveis", venue:"New York", ch:"NRK", night:false}
+];
+
+const KO = [
+  {rnd:"16-delsfinale", dt:"28. juni – 4. juli", ch:"TV2"},
+  {rnd:"Åttedelsfinale", dt:"4. – 7. juli", ch:"NRK"},
+  {rnd:"Kvartfinale", dt:"9. – 12. juli", ch:"TV2"},
+  {rnd:"Semifinale", dt:"14. – 15. juli", ch:"TV2"},
+  {rnd:"Bronsefinale", dt:"18. juli", ch:"NRK"},
+  {rnd:"Finale", dt:"19. juli · 21:00", ch:"NRK"}
+];
+
+// Komplett kampliste – norsk tid, kanal og arena (kilde: NRKs sendeskjema)
+const ALL_MATCHES = [
+  // Gruppespill
+  {d:"2026-06-11",t:"21:00",h:"Mexico",a:"Sør-Afrika",g:"A",ch:"TV2",v:"Mexico by"},
+  {d:"2026-06-12",t:"04:00",h:"Sør-Korea",a:"Tsjekkia",g:"A",ch:"NRK",v:"Guadalajara"},
+  {d:"2026-06-12",t:"21:00",h:"Canada",a:"Bosnia-Hercegovina",g:"B",ch:"NRK",v:"Toronto"},
+  {d:"2026-06-13",t:"03:00",h:"USA",a:"Paraguay",g:"D",ch:"TV2",v:"Los Angeles"},
+  {d:"2026-06-13",t:"21:00",h:"Qatar",a:"Sveits",g:"B",ch:"NRK",v:"San Francisco"},
+  {d:"2026-06-14",t:"00:00",h:"Brasil",a:"Marokko",g:"C",ch:"TV2",v:"New York"},
+  {d:"2026-06-14",t:"03:00",h:"Haiti",a:"Skottland",g:"C",ch:"TV2",v:"Boston"},
+  {d:"2026-06-14",t:"06:00",h:"Australia",a:"Tyrkia",g:"D",ch:"TV2",v:"Vancouver"},
+  {d:"2026-06-14",t:"19:00",h:"Tyskland",a:"Curaçao",g:"E",ch:"NRK",v:"Houston"},
+  {d:"2026-06-14",t:"22:00",h:"Nederland",a:"Japan",g:"F",ch:"TV2",v:"Dallas"},
+  {d:"2026-06-15",t:"01:00",h:"Elfenbenskysten",a:"Ecuador",g:"E",ch:"TV2",v:"Philadelphia"},
+  {d:"2026-06-15",t:"04:00",h:"Sverige",a:"Tunisia",g:"F",ch:"TV2",v:"Monterrey"},
+  {d:"2026-06-15",t:"18:00",h:"Spania",a:"Kapp Verde",g:"H",ch:"TV2",v:"Atlanta"},
+  {d:"2026-06-15",t:"21:00",h:"Belgia",a:"Egypt",g:"G",ch:"NRK",v:"Seattle"},
+  {d:"2026-06-16",t:"00:00",h:"Saudi-Arabia",a:"Uruguay",g:"H",ch:"NRK",v:"Miami"},
+  {d:"2026-06-16",t:"03:00",h:"Iran",a:"New Zealand",g:"G",ch:"NRK",v:"Los Angeles"},
+  {d:"2026-06-16",t:"21:00",h:"Frankrike",a:"Senegal",g:"I",ch:"TV2",v:"New York"},
+  {d:"2026-06-17",t:"00:00",h:"Irak",a:"Norge",g:"I",ch:"TV2",v:"Boston"},
+  {d:"2026-06-17",t:"03:00",h:"Argentina",a:"Algerie",g:"J",ch:"NRK",v:"Kansas City"},
+  {d:"2026-06-17",t:"06:00",h:"Østerrike",a:"Jordan",g:"J",ch:"NRK",v:"San Francisco"},
+  {d:"2026-06-17",t:"19:00",h:"Portugal",a:"DR Kongo",g:"K",ch:"NRK",v:"Houston"},
+  {d:"2026-06-17",t:"22:00",h:"England",a:"Kroatia",g:"L",ch:"TV2",v:"Dallas"},
+  {d:"2026-06-18",t:"01:00",h:"Ghana",a:"Panama",g:"L",ch:"TV2",v:"Toronto"},
+  {d:"2026-06-18",t:"04:00",h:"Usbekistan",a:"Colombia",g:"K",ch:"TV2",v:"Mexico by"},
+  {d:"2026-06-18",t:"18:00",h:"Tsjekkia",a:"Sør-Afrika",g:"A",ch:"NRK",v:"Atlanta"},
+  {d:"2026-06-18",t:"21:00",h:"Sveits",a:"Bosnia-Hercegovina",g:"B",ch:"TV2",v:"Los Angeles"},
+  {d:"2026-06-19",t:"00:00",h:"Canada",a:"Qatar",g:"B",ch:"TV2",v:"Vancouver"},
+  {d:"2026-06-19",t:"03:00",h:"Mexico",a:"Sør-Korea",g:"A",ch:"TV2",v:"Guadalajara"},
+  {d:"2026-06-19",t:"21:00",h:"USA",a:"Australia",g:"D",ch:"NRK",v:"Seattle"},
+  {d:"2026-06-20",t:"00:00",h:"Skottland",a:"Marokko",g:"C",ch:"NRK",v:"Boston"},
+  {d:"2026-06-20",t:"02:30",h:"Brasil",a:"Haiti",g:"C",ch:"NRK",v:"Philadelphia"},
+  {d:"2026-06-20",t:"05:00",h:"Tyrkia",a:"Paraguay",g:"D",ch:"NRK",v:"San Francisco"},
+  {d:"2026-06-20",t:"19:00",h:"Nederland",a:"Sverige",g:"F",ch:"NRK",v:"Houston"},
+  {d:"2026-06-20",t:"22:00",h:"Tyskland",a:"Elfenbenskysten",g:"E",ch:"TV2",v:"Toronto"},
+  {d:"2026-06-21",t:"02:00",h:"Ecuador",a:"Curaçao",g:"E",ch:"TV2",v:"Kansas City"},
+  {d:"2026-06-21",t:"06:00",h:"Tunisia",a:"Japan",g:"F",ch:"NRK",v:"Monterrey"},
+  {d:"2026-06-21",t:"18:00",h:"Spania",a:"Saudi-Arabia",g:"H",ch:"NRK",v:"Atlanta"},
+  {d:"2026-06-21",t:"21:00",h:"Belgia",a:"Iran",g:"G",ch:"TV2",v:"Los Angeles"},
+  {d:"2026-06-22",t:"00:00",h:"Uruguay",a:"Kapp Verde",g:"H",ch:"TV2",v:"Miami"},
+  {d:"2026-06-22",t:"03:00",h:"New Zealand",a:"Egypt",g:"G",ch:"TV2",v:"Vancouver"},
+  {d:"2026-06-22",t:"19:00",h:"Argentina",a:"Østerrike",g:"J",ch:"TV2",v:"Dallas"},
+  {d:"2026-06-22",t:"23:00",h:"Frankrike",a:"Irak",g:"I",ch:"NRK",v:"Philadelphia"},
+  {d:"2026-06-23",t:"02:00",h:"Norge",a:"Senegal",g:"I",ch:"NRK",v:"New York"},
+  {d:"2026-06-23",t:"05:00",h:"Jordan",a:"Algerie",g:"J",ch:"TV2",v:"San Francisco"},
+  {d:"2026-06-23",t:"19:00",h:"Portugal",a:"Usbekistan",g:"K",ch:"TV2",v:"Houston"},
+  {d:"2026-06-23",t:"22:00",h:"England",a:"Ghana",g:"L",ch:"NRK",v:"Boston"},
+  {d:"2026-06-24",t:"01:00",h:"Panama",a:"Kroatia",g:"L",ch:"NRK",v:"Toronto"},
+  {d:"2026-06-24",t:"04:00",h:"Colombia",a:"DR Kongo",g:"K",ch:"TV2",v:"Guadalajara"},
+  {d:"2026-06-24",t:"21:00",h:"Sveits",a:"Canada",g:"B",ch:"NRK",v:"Vancouver"},
+  {d:"2026-06-24",t:"21:00",h:"Bosnia-Hercegovina",a:"Qatar",g:"B",ch:"NRK",v:"Seattle"},
+  {d:"2026-06-25",t:"00:00",h:"Skottland",a:"Brasil",g:"C",ch:"NRK",v:"Miami"},
+  {d:"2026-06-25",t:"00:00",h:"Marokko",a:"Haiti",g:"C",ch:"NRK",v:"Atlanta"},
+  {d:"2026-06-25",t:"03:00",h:"Mexico",a:"Tsjekkia",g:"A",ch:"TV2",v:"Mexico by"},
+  {d:"2026-06-25",t:"03:00",h:"Sør-Afrika",a:"Sør-Korea",g:"A",ch:"TV2",v:"Monterrey"},
+  {d:"2026-06-25",t:"22:00",h:"Curaçao",a:"Elfenbenskysten",g:"E",ch:"TV2",v:"Philadelphia"},
+  {d:"2026-06-25",t:"22:00",h:"Ecuador",a:"Tyskland",g:"E",ch:"TV2",v:"New York"},
+  {d:"2026-06-26",t:"01:00",h:"Tunisia",a:"Nederland",g:"F",ch:"TV2",v:"Kansas City"},
+  {d:"2026-06-26",t:"01:00",h:"Japan",a:"Sverige",g:"F",ch:"TV2",v:"Dallas"},
+  {d:"2026-06-26",t:"04:00",h:"Tyrkia",a:"USA",g:"D",ch:"NRK",v:"Los Angeles"},
+  {d:"2026-06-26",t:"04:00",h:"Paraguay",a:"Australia",g:"D",ch:"NRK",v:"San Francisco"},
+  {d:"2026-06-26",t:"21:00",h:"Norge",a:"Frankrike",g:"I",ch:"NRK",v:"Boston"},
+  {d:"2026-06-26",t:"21:00",h:"Senegal",a:"Irak",g:"I",ch:"NRK",v:"Toronto"},
+  {d:"2026-06-27",t:"02:00",h:"Kapp Verde",a:"Saudi-Arabia",g:"H",ch:"NRK",v:"Houston"},
+  {d:"2026-06-27",t:"02:00",h:"Uruguay",a:"Spania",g:"H",ch:"NRK",v:"Guadalajara"},
+  {d:"2026-06-27",t:"05:00",h:"Egypt",a:"Iran",g:"G",ch:"TV2",v:"Seattle"},
+  {d:"2026-06-27",t:"05:00",h:"New Zealand",a:"Belgia",g:"G",ch:"TV2",v:"Vancouver"},
+  {d:"2026-06-27",t:"23:00",h:"Panama",a:"England",g:"L",ch:"TV2",v:"New York"},
+  {d:"2026-06-27",t:"23:00",h:"Kroatia",a:"Ghana",g:"L",ch:"TV2",v:"Philadelphia"},
+  {d:"2026-06-28",t:"01:30",h:"Colombia",a:"Portugal",g:"K",ch:"NRK",v:"Miami"},
+  {d:"2026-06-28",t:"01:30",h:"DR Kongo",a:"Usbekistan",g:"K",ch:"NRK",v:"Atlanta"},
+  {d:"2026-06-28",t:"04:00",h:"Algerie",a:"Østerrike",g:"J",ch:"NRK",v:"Kansas City"},
+  {d:"2026-06-28",t:"04:00",h:"Jordan",a:"Argentina",g:"J",ch:"NRK",v:"Dallas"},
+  // Sluttspill – 16-delsfinale (R32)
+  {d:"2026-06-28",t:"21:00",h:"2.-plass gruppe A",a:"2.-plass gruppe B",round:"16-delsfinale 1",ch:"TV2",v:"Los Angeles"},
+  {d:"2026-06-29",t:"19:00",h:"Vinner gruppe C",a:"2.-plass gruppe F",round:"16-delsfinale 4",ch:"TV2",v:"Houston"},
+  {d:"2026-06-29",t:"22:30",h:"Vinner gruppe E",a:"3.-plass (ABCDF)",round:"16-delsfinale 2",ch:"TV2",v:"Boston"},
+  {d:"2026-06-30",t:"03:00",h:"Vinner gruppe F",a:"2.-plass gruppe C",round:"16-delsfinale 3",ch:"TV2",v:"Monterrey"},
+  {d:"2026-06-30",t:"19:00",h:"2.-plass gruppe E",a:"2.-plass gruppe I",round:"16-delsfinale 6",ch:"TV2",v:"Dallas"},
+  {d:"2026-06-30",t:"23:00",h:"Vinner gruppe I",a:"3.-plass (CDFGH)",round:"16-delsfinale 5",ch:"TV2",v:"New York"},
+  {d:"2026-07-01",t:"03:00",h:"Vinner gruppe A",a:"3.-plass (CEFHI)",round:"16-delsfinale 7",ch:"TV2",v:"Mexico by"},
+  {d:"2026-07-01",t:"18:00",h:"Vinner gruppe L",a:"3.-plass (EHIJK)",round:"16-delsfinale 8",ch:"TV2",v:"Atlanta"},
+  {d:"2026-07-01",t:"22:00",h:"Vinner gruppe G",a:"3.-plass (AEHIJ)",round:"16-delsfinale 10",ch:"TV2",v:"Seattle"},
+  {d:"2026-07-02",t:"02:00",h:"Vinner gruppe D",a:"3.-plass (BEFIJ)",round:"16-delsfinale 9",ch:"TV2",v:"San Francisco"},
+  {d:"2026-07-02",t:"21:00",h:"Vinner gruppe H",a:"2.-plass gruppe J",round:"16-delsfinale 12",ch:"TV2",v:"Los Angeles"},
+  {d:"2026-07-03",t:"01:00",h:"2.-plass gruppe K",a:"2.-plass gruppe L",round:"16-delsfinale 11",ch:"TV2",v:"Toronto"},
+  {d:"2026-07-03",t:"05:00",h:"Vinner gruppe B",a:"3.-plass (EFGIJ)",round:"16-delsfinale 13",ch:"TV2",v:"Vancouver"},
+  {d:"2026-07-03",t:"20:00",h:"2.-plass gruppe D",a:"2.-plass gruppe G",round:"16-delsfinale 16",ch:"TV2",v:"San Francisco"},
+  {d:"2026-07-04",t:"00:00",h:"Vinner gruppe J",a:"2.-plass gruppe H",round:"16-delsfinale 14",ch:"TV2",v:"Miami"},
+  {d:"2026-07-04",t:"03:30",h:"Vinner gruppe K",a:"3.-plass (DEIJL)",round:"16-delsfinale 15",ch:"TV2",v:"Kansas City"},
+  // Åttedelsfinale (R16)
+  {d:"2026-07-04",t:"19:00",h:"Vinner 16-del 1",a:"Vinner 16-del 3",round:"Åttedelsfinale 2",ch:"NRK",v:"Houston"},
+  {d:"2026-07-04",t:"23:00",h:"Vinner 16-del 2",a:"Vinner 16-del 5",round:"Åttedelsfinale 1",ch:"NRK",v:"Philadelphia"},
+  {d:"2026-07-05",t:"22:00",h:"Vinner 16-del 4",a:"Vinner 16-del 6",round:"Åttedelsfinale 3",ch:"NRK",v:"New York"},
+  {d:"2026-07-06",t:"02:00",h:"Vinner 16-del 7",a:"Vinner 16-del 8",round:"Åttedelsfinale 4",ch:"NRK",v:"Mexico by"},
+  {d:"2026-07-06",t:"21:00",h:"Vinner 16-del 11",a:"Vinner 16-del 2",round:"Åttedelsfinale 5",ch:"NRK",v:"Dallas"},
+  {d:"2026-07-07",t:"02:00",h:"Vinner 16-del 9",a:"Vinner 16-del 10",round:"Åttedelsfinale 6",ch:"NRK",v:"Seattle"},
+  {d:"2026-07-07",t:"18:00",h:"Vinner 16-del 14",a:"Vinner 16-del 16",round:"Åttedelsfinale 7",ch:"NRK",v:"Atlanta"},
+  {d:"2026-07-07",t:"22:00",h:"Vinner 16-del 13",a:"Vinner 16-del 15",round:"Åttedelsfinale 8",ch:"NRK",v:"Vancouver"},
+  // Kvartfinale
+  {d:"2026-07-09",t:"22:00",h:"Vinner 8-del 1",a:"Vinner 8-del 2",round:"Kvartfinale 1",ch:"TV2",v:"Boston"},
+  {d:"2026-07-10",t:"21:00",h:"Vinner 8-del 5",a:"Vinner 8-del 6",round:"Kvartfinale 2",ch:"TV2",v:"Los Angeles"},
+  {d:"2026-07-11",t:"23:00",h:"Vinner 8-del 3",a:"Vinner 8-del 4",round:"Kvartfinale 3",ch:"TV2",v:"Miami"},
+  {d:"2026-07-12",t:"03:00",h:"Vinner 8-del 7",a:"Vinner 8-del 8",round:"Kvartfinale 4",ch:"TV2",v:"Kansas City"},
+  // Semifinale
+  {d:"2026-07-14",t:"21:00",h:"Vinner kvartfinale 1",a:"Vinner kvartfinale 2",round:"Semifinale 1",ch:"TV2",v:"Dallas"},
+  {d:"2026-07-15",t:"21:00",h:"Vinner kvartfinale 3",a:"Vinner kvartfinale 4",round:"Semifinale 2",ch:"TV2",v:"Atlanta"},
+  // Bronse & finale
+  {d:"2026-07-18",t:"23:00",h:"Taper semifinale 1",a:"Taper semifinale 2",round:"Bronsefinale",ch:"NRK",v:"Miami"},
+  {d:"2026-07-19",t:"21:00",h:"Vinner semifinale 1",a:"Vinner semifinale 2",round:"Finale",ch:"NRK",v:"New York"}
+];
+
+const TS="2026-06-11", TE="2026-07-19";
+const NRK_SKJEMA="https://www.nrk.no/sport/program-og-tv-guide-for-fotball-vm_-slik-ser-du-norges-kamper-pa-tv-1.17694535";
+const DNO=["søndag","mandag","tirsdag","onsdag","torsdag","fredag","lørdag"];
+const MNO=["januar","februar","mars","april","mai","juni","juli","august","september","oktober","november","desember"];
+
+const esc = s => String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const teamHTML = n => `<span class="fl">${FLAG[n]||"🏳️"}</span><span class="nm">${esc(n)}</span>`;
+
+function matchCard(m, isNo){
+  const vs = `${FLAG[m.teams[0]]||""} ${esc(m.teams[0])} – ${esc(m.teams[1])} ${FLAG[m.teams[1]]||""}`;
+  return `<div class="mcard ${isNo?'no':''}" data-ch="${m.ch}">
+    ${m.night?'<div class="nightflag">☕ NATTEKAMP</div>':''}
+    <div class="when">${esc(m.when)}</div>
+    <div class="teams">${vs}</div>
+    <div class="venue">📍 ${esc(m.venue)}</div>
+    <div class="row">
+      <div class="time">${m.time}<small>${esc(m.note)}</small></div>
+      <div class="badge ${m.ch}">${m.ch==='TV2'?'TV 2':m.ch}</div>
+    </div>
+  </div>`;
+}
+
+document.getElementById('noMatches').innerHTML = NO_MATCHES.map(m=>matchCard(m,true)).join('');
+document.getElementById('bigMatches').innerHTML = BIG_MATCHES.map(m=>matchCard(m,false)).join('');
+
+document.getElementById('groups').innerHTML = Object.entries(GROUPS).map(([g,o])=>`
+  <div class="gcard" data-teams="${o.teams.join('|').toLowerCase()}">
+    <h3>Gruppe <b>${g}</b></h3>
+    ${o.teams.map(t=>`<div class="team ${t==='Norge'?'is-no':''}" data-team="${t.toLowerCase()}">${teamHTML(t)}</div>`).join('')}
+    <div class="where">📍 ${esc(o.where)}</div>
+  </div>`).join('');
+
+document.getElementById('ko').innerHTML = KO.map(k=>`
+  <div class="kocard" data-ch="${k.ch}">
+    <div class="rnd">${esc(k.rnd)}</div>
+    <div class="dt">${esc(k.dt)}</div>
+    <span class="badge b ${k.ch}">${k.ch==='TV2'?'TV 2':k.ch}</span>
+  </div>`).join('');
+
+// --- Søk ---
+const q = document.getElementById('q');
+const clear = document.getElementById('clear');
+const gcards = [...document.querySelectorAll('.gcard')];
+const noresult = document.getElementById('noresult');
+
+function runSearch(){
+  const term = q.value.trim().toLowerCase();
+  clear.style.display = term ? 'block' : 'none';
+  let hits = 0;
+  gcards.forEach(card=>{
+    const teams = card.dataset.teams;
+    const anyPartial = term && teams.split('|').some(t=>t.includes(term));
+    if(!term){
+      card.classList.remove('dim','hit');
+      card.querySelectorAll('.team').forEach(t=>t.classList.remove('match'));
+    } else if(anyPartial){
+      card.classList.remove('dim'); card.classList.add('hit'); hits++;
+      card.querySelectorAll('.team').forEach(t=>{
+        t.classList.toggle('match', t.dataset.team.includes(term) && t.dataset.team!=='norge');
+      });
+    } else {
+      card.classList.add('dim'); card.classList.remove('hit');
+      card.querySelectorAll('.team').forEach(t=>t.classList.remove('match'));
+    }
+  });
+  noresult.style.display = (term && hits===0) ? 'block' : 'none';
+}
+q.addEventListener('input', runSearch);
+clear.addEventListener('click', ()=>{ q.value=''; runSearch(); q.focus(); });
+
+// --- Kanalfilter ---
+let activeCh = 'ALLE';
+document.querySelectorAll('.filters .chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    document.querySelectorAll('.filters .chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    activeCh = chip.dataset.ch;
+    document.querySelectorAll('.mcard, .kocard').forEach(el=>{
+      el.style.display = (activeCh==='ALLE' || el.dataset.ch===activeCh) ? '' : 'none';
+    });
+    if(dayOpen) renderDay();
+  });
+});
+
+// --- Dagens kamper ---
+let dayCursor = new Date();
+var dayOpen = false;
+const isoOf = dt=>`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+
+function dayRow(m){
+  const isNo = (m.h==='Norge'||m.a==='Norge');
+  const night = m.t < "06:00";
+  const fh = FLAG[m.h] ? FLAG[m.h]+' ' : '';
+  const fa = FLAG[m.a] ? ' '+FLAG[m.a] : '';
+  const label = m.round ? m.round : ('Gruppe '+m.g);
+  const chBadge = m.ch==='TBA'
+    ? '<span class="badge TBA">NRK/TV 2 ?</span>'
+    : `<span class="badge ${m.ch}">${m.ch==='TV2'?'TV 2':m.ch}</span>`;
+  return `<div class="drow ${isNo?'no':''}">
+    <div class="dt">${night?'☕ ':''}${m.t}</div>
+    <div class="vs">${fh}${esc(m.h)} – ${esc(m.a)}${fa}<span class="grp">${esc(label)}${m.v?' · '+esc(m.v):''}</span></div>
+    ${chBadge}
+  </div>`;
+}
+
+function renderDay(){
+  const key = isoOf(dayCursor);
+  document.getElementById('dayName').textContent = DNO[dayCursor.getDay()];
+  document.getElementById('dayDate').textContent = `${dayCursor.getDate()}. ${MNO[dayCursor.getMonth()]} ${dayCursor.getFullYear()}`;
+  let list = ALL_MATCHES.filter(m=>m.d===key).sort((x,y)=>x.t.localeCompare(y.t));
+  if(activeCh!=='ALLE') list = list.filter(m=>m.ch===activeCh);
+  const el = document.getElementById('dayList');
+  if(list.length){
+    el.innerHTML = list.map(dayRow).join('');
+  } else {
+    const within = key>=TS && key<=TE;
+    let msg;
+    if(activeCh!=='ALLE' && within){
+      msg = `Ingen ${activeCh==='TV2'?'TV 2':'NRK'}-kamper denne dagen. Skru av kanalfilteret, eller bla til en annen dag.`;
+    } else if(within){
+      msg = `Ingen VM-kamper satt opp denne dagen.`;
+    } else {
+      msg = `Ingen VM-kamper denne dagen. Mesterskapet spilles 11. juni – 19. juli 2026.`;
+    }
+    el.innerHTML = `<div class="day-empty">${msg}</div>`;
+  }
+}
+
+const panel = document.getElementById('dayPanel');
+document.getElementById('todayBtn').addEventListener('click', ()=>{
+  if(dayOpen){ panel.classList.remove('open'); dayOpen=false; return; }
+  if(tipOpen){ tipPanel.classList.remove('open'); tipOpen=false; }
+  dayCursor = new Date(); dayOpen = true; panel.classList.add('open'); renderDay();
+  setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),120);
+});
+document.getElementById('dayPrev').addEventListener('click', ()=>{ dayCursor.setDate(dayCursor.getDate()-1); renderDay(); });
+document.getElementById('dayNext').addEventListener('click', ()=>{ dayCursor.setDate(dayCursor.getDate()+1); renderDay(); });
+document.getElementById('dayToday').addEventListener('click', ()=>{ dayCursor = new Date(); renderDay(); });
+
+// --- Tippeligaen ---
+const TIPPERS = ["Oddbjørn","Lars Morten","Sandra","Nina","Mikael","Leif","Rune"];
+const ME = "Rune";
+// Resultater i rekkefølgen hjemmelag–bortelag. "Nederland–Sverige" er normalisert til samme retning for alle.
+const TIPS_MATCHES = [
+  {h:"Norge",a:"Irak",picks:["6-1","4-0","3-0","3-1","2-1","4-0","2-1"]},
+  {h:"Norge",a:"Senegal",picks:["3-2","3-1","2-1","1-1","3-2","2-1","1-0"]},
+  {h:"Norge",a:"Frankrike",picks:["1-1","1-3","2-2","2-1","1-3","2-3","1-4"]},
+  {h:"England",a:"Kroatia",picks:["2-1","1-0","2-0","2-0","3-2","1-3","2-0"]},
+  {h:"Nederland",a:"Sverige",picks:["2-0","2-1","2-1","0-1","2-1","3-0","3-1"]}
+];
+const TIPS_WINNER = ["England","Spania","England","Brasil","Spania","Frankrike","Norge"];
+
+function renderTipWinner(){
+  const tally={};
+  TIPS_WINNER.forEach((w,i)=>{ (tally[w]=tally[w]||[]).push(TIPPERS[i]); });
+  const order=Object.entries(tally).sort((a,b)=>b[1].length-a[1].length);
+  document.getElementById('winTally').innerHTML = order.map(([land,who])=>
+    `<span class="wpill">${FLAG[land]||'🏳️'} <b>${esc(land)} ×${who.length}</b> <span class="who">${who.map(esc).join(', ')}</span></span>`
+  ).join('');
+}
+function fmtMatch(m){ return `${FLAG[m.h]||''} ${esc(m.h)} – ${esc(m.a)} ${FLAG[m.a]||''}`; }
+
+function renderTipKamp(){
+  document.getElementById('tipBodyHead').textContent='Kamptips';
+  document.getElementById('tipBody').innerHTML = TIPS_MATCHES.map(m=>`
+    <div class="tmatch">
+      <h4>${fmtMatch(m)}</h4>
+      <div class="tgrid">
+        ${TIPPERS.map((t,i)=>`<div class="tcell"><span class="nm">${esc(t)}</span><span class="sc">${esc(m.picks[i])}</span></div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+function renderTipPerson(){
+  document.getElementById('tipBodyHead').textContent='Alle tips per person';
+  document.getElementById('tipBody').innerHTML = TIPPERS.map((t,i)=>`
+    <div class="pcard">
+      <h4>${esc(t)}</h4>
+      ${TIPS_MATCHES.map(m=>`<div class="prow"><span class="pm">${esc(m.h)} – ${esc(m.a)}</span><span class="ps">${esc(m.picks[i])}</span></div>`).join('')}
+      <div class="prow"><span class="pm">VM-vinner</span><span class="ps">${FLAG[TIPS_WINNER[i]]||''} ${esc(TIPS_WINNER[i])}</span></div>
+    </div>`).join('');
+}
+
+let tipView='kamp';
+function renderTip(){ renderTipWinner(); tipView==='kamp' ? renderTipKamp() : renderTipPerson(); }
+
+const tipPanel=document.getElementById('tipPanel');
+let tipOpen=false;
+document.getElementById('tipBtn').addEventListener('click', ()=>{
+  if(tipOpen){ tipPanel.classList.remove('open'); tipOpen=false; return; }
+  if(dayOpen){ panel.classList.remove('open'); dayOpen=false; }
+  tipOpen=true; tipPanel.classList.add('open'); renderTip();
+  setTimeout(()=>tipPanel.scrollIntoView({behavior:'smooth',block:'nearest'}),120);
+});
+document.querySelectorAll('.tip-toggle .chip').forEach(c=>{
+  c.addEventListener('click', ()=>{
+    document.querySelectorAll('.tip-toggle .chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active'); tipView=c.dataset.view; renderTip();
+  });
+});
+</script>
+</body>
+</html>
