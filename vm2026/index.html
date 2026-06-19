@@ -21,6 +21,7 @@
     --nrk:#00b1b0;
     --tv2:#ffb000;
     --gold:#f4c95d;
+    --good:#4ade80;
     --r:14px;
   }
   *{box-sizing:border-box}
@@ -113,6 +114,23 @@
   .prow .pm{color:var(--muted)}
   .prow .ps{font-family:'Oswald';font-weight:700}
   .tip-note{background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:14px;color:var(--muted);font-size:13px;text-align:center;margin-top:8px}
+  .pts-note{font-size:11.5px;color:var(--muted);text-align:center;margin:0 0 8px}
+  .lbrow{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:6px}
+  .lbrow.lead{border-color:var(--gold);background:rgba(244,201,93,.08)}
+  .lbrank{font-family:'Oswald';font-weight:700;font-size:17px;min-width:34px;color:var(--muted)}
+  .lbrow.lead .lbrank{color:var(--gold)}
+  .lbname{flex:1;font-size:15px;display:flex;align-items:center;gap:8px}
+  .lbsub{font-size:10.5px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+  .lbpts{font-family:'Oswald';font-weight:700;font-size:18px}
+  .fasit{font-family:'Inter';font-weight:600;font-size:12px;color:var(--good);background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.3);padding:2px 8px;border-radius:6px;margin-left:8px;white-space:nowrap}
+  .fasit.pending{color:var(--muted);background:transparent;border-color:var(--line)}
+  .tcell.hit-exact{border-color:var(--good);background:rgba(74,222,128,.16)}
+  .tcell.hit-exact .sc{color:var(--good)}
+  .tcell.hit-out{border-color:rgba(244,201,93,.5);background:rgba(244,201,93,.1)}
+  .tcell.hit-miss{opacity:.4}
+  .prow.hit-exact .ps{color:var(--good)}
+  .prow.hit-out .ps{color:var(--gold)}
+  .prow.hit-miss{opacity:.45}
 
   .section-title{font-family:'Oswald';text-transform:uppercase;letter-spacing:.16em;font-size:14px;color:var(--muted);margin:34px 0 14px;display:flex;align-items:center;gap:12px}
   .section-title::after{content:"";height:1px;flex:1;background:var(--line)}
@@ -214,15 +232,20 @@
   </div>
 
   <div id="tipPanel">
+    <div class="tip-head" id="lbHead">Tabell</div>
+    <div class="pts-note">Poeng: 1 for riktig utfall · 2 for eksakt resultat · 1 for riktig verdensmester</div>
+    <div id="lbBody"></div>
+
+    <div class="tip-head">🏆 Hvem vinner VM?</div>
+    <div class="wtally" id="winTally"></div>
+
     <div class="tip-toggle">
       <button class="chip active" data-view="kamp">Per kamp</button>
       <button class="chip" data-view="person">Per person</button>
     </div>
-    <div class="tip-head">🏆 Hvem vinner VM?</div>
-    <div class="wtally" id="winTally"></div>
     <div class="tip-head" id="tipBodyHead">Kamptips</div>
     <div id="tipBody"></div>
-    <div class="tip-note">Poeng og tabell kan legges på når resultatene begynner å komme inn — si fra om poengsystemet.</div>
+    <div class="tip-note">Tabellen oppdateres automatisk når nye resultater legges inn.</div>
   </div>
 
   <div class="section-title" id="t-no">🇳🇴 Norges kamper · Gruppe I</div>
@@ -584,6 +607,50 @@ const TIPS_MATCHES = [
 ];
 const TIPS_WINNER = ["England","Spania","England","Brasil","Spania","Frankrike","Norge","Nederland","Norge"];
 
+// --- Poeng & tabell ---
+// Poengsystem: 3 = eksakt riktig resultat, 1 = riktig utfall (seier/uavgjort), 0 = bom.
+const PTS_EXACT = 2, PTS_OUTCOME = 1, PTS_WINNER = 1;
+let WINNER_RESULT = null; // Faktisk verdensmester – fyll inn når finalen er spilt, f.eks. "Norge"
+// Fasit – legg til ettersom kampene spilles. Nøkkel = "Hjemmelag-Bortelag", samme retning som over.
+const RESULTS = {
+  "Norge-Irak": "4-1",
+  "England-Kroatia": "4-2"
+  // "Nederland-Sverige": "", "Norge-Senegal": "", "Norge-Frankrike": ""
+};
+const mKey = m => `${m.h}-${m.a}`;
+function parseScore(s){ const p=String(s).split('-').map(n=>parseInt(n.trim(),10)); return {hg:p[0],ag:p[1]}; }
+function outcome(sc){ return sc.hg>sc.ag ? 'H' : (sc.hg<sc.ag ? 'B' : 'U'); }
+function scorePick(pick, result){
+  if(!result) return null;
+  const p=parseScore(pick), r=parseScore(result);
+  if(isNaN(p.hg)||isNaN(p.ag)) return 0;
+  if(p.hg===r.hg && p.ag===r.ag) return PTS_EXACT;
+  return outcome(p)===outcome(r) ? PTS_OUTCOME : 0;
+}
+function totalFor(i){
+  let pts=0;
+  TIPS_MATCHES.forEach(m=>{ const r=RESULTS[mKey(m)]; if(r) pts+=scorePick(m.picks[i],r); });
+  if(WINNER_RESULT && TIPS_WINNER[i]===WINNER_RESULT) pts+=PTS_WINNER;
+  return pts;
+}
+function exactFor(i){ let n=0; TIPS_MATCHES.forEach(m=>{ const r=RESULTS[mKey(m)]; if(r && scorePick(m.picks[i],r)===PTS_EXACT) n++; }); return n; }
+
+function renderStandings(){
+  const played = TIPS_MATCHES.filter(m=>RESULTS[mKey(m)]).length;
+  document.getElementById('lbHead').textContent = `Tabell · ${played} av ${TIPS_MATCHES.length} kamper spilt`;
+  const rows = TIPPERS.map((t,i)=>({name:t, pts:totalFor(i), exact:exactFor(i)}))
+    .sort((a,b)=> b.pts-a.pts || b.exact-a.exact || a.name.localeCompare(b.name));
+  let rank=0, prev=null;
+  document.getElementById('lbBody').innerHTML = rows.map((r,idx)=>{
+    if(r.pts!==prev){ rank=idx+1; prev=r.pts; }
+    return `<div class="lbrow ${rank===1&&played>0?'lead':''}">
+      <span class="lbrank">${rank}.</span>
+      <span class="lbname">${esc(r.name)}${r.exact?`<span class="lbsub">${r.exact} eksakt</span>`:''}</span>
+      <span class="lbpts">${r.pts} p</span>
+    </div>`;
+  }).join('');
+}
+
 function renderTipWinner(){
   const tally={};
   TIPS_WINNER.forEach((w,i)=>{ (tally[w]=tally[w]||[]).push(TIPPERS[i]); });
@@ -596,26 +663,38 @@ function fmtMatch(m){ return `${FLAG[m.h]||''} ${esc(m.h)} – ${esc(m.a)} ${FLA
 
 function renderTipKamp(){
   document.getElementById('tipBodyHead').textContent='Kamptips';
-  document.getElementById('tipBody').innerHTML = TIPS_MATCHES.map(m=>`
-    <div class="tmatch">
-      <h4>${fmtMatch(m)}</h4>
+  document.getElementById('tipBody').innerHTML = TIPS_MATCHES.map(m=>{
+    const res = RESULTS[mKey(m)];
+    const fasit = res ? `<span class="fasit">Fasit ${esc(res)}</span>` : `<span class="fasit pending">ikke spilt</span>`;
+    return `<div class="tmatch">
+      <h4>${fmtMatch(m)} ${fasit}</h4>
       <div class="tgrid">
-        ${TIPPERS.map((t,i)=>`<div class="tcell"><span class="nm">${esc(t)}</span><span class="sc">${esc(m.picks[i])}</span></div>`).join('')}
+        ${TIPPERS.map((t,i)=>{
+          const sp = scorePick(m.picks[i],res);
+          const cls = sp===null ? '' : (sp===PTS_EXACT ? 'hit-exact' : (sp===PTS_OUTCOME ? 'hit-out' : 'hit-miss'));
+          return `<div class="tcell ${cls}"><span class="nm">${esc(t)}</span><span class="sc">${esc(m.picks[i])}</span></div>`;
+        }).join('')}
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 function renderTipPerson(){
   document.getElementById('tipBodyHead').textContent='Alle tips per person';
+  const anyPlayed = TIPS_MATCHES.some(m=>RESULTS[mKey(m)]);
   document.getElementById('tipBody').innerHTML = TIPPERS.map((t,i)=>`
     <div class="pcard">
-      <h4>${esc(t)}</h4>
-      ${TIPS_MATCHES.map(m=>`<div class="prow"><span class="pm">${esc(m.h)} – ${esc(m.a)}</span><span class="ps">${esc(m.picks[i])}</span></div>`).join('')}
-      <div class="prow"><span class="pm">VM-vinner</span><span class="ps">${FLAG[TIPS_WINNER[i]]||''} ${esc(TIPS_WINNER[i])}</span></div>
+      <h4>${esc(t)}${anyPlayed?`<span class="you">${totalFor(i)} p</span>`:''}</h4>
+      ${TIPS_MATCHES.map(m=>{
+        const sp = scorePick(m.picks[i],RESULTS[mKey(m)]);
+        const cls = sp===null ? '' : (sp===PTS_EXACT ? 'hit-exact' : (sp===PTS_OUTCOME ? 'hit-out' : 'hit-miss'));
+        return `<div class="prow ${cls}"><span class="pm">${esc(m.h)} – ${esc(m.a)}</span><span class="ps">${esc(m.picks[i])}</span></div>`;
+      }).join('')}
+      <div class="prow ${WINNER_RESULT ? (TIPS_WINNER[i]===WINNER_RESULT?'hit-out':'hit-miss') : ''}"><span class="pm">VM-vinner</span><span class="ps">${FLAG[TIPS_WINNER[i]]||''} ${esc(TIPS_WINNER[i])}</span></div>
     </div>`).join('');
 }
 
 let tipView='kamp';
-function renderTip(){ renderTipWinner(); tipView==='kamp' ? renderTipKamp() : renderTipPerson(); }
+function renderTip(){ renderStandings(); renderTipWinner(); tipView==='kamp' ? renderTipKamp() : renderTipPerson(); }
 
 const tipPanel=document.getElementById('tipPanel');
 let tipOpen=false;
