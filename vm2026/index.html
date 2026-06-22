@@ -603,7 +603,9 @@ const TIPS_MATCHES = [
   {h:"Norge",a:"Senegal",picks:["3-2","3-1","2-1","1-1","3-2","2-1","1-0","2-1","3-1"]},
   {h:"Norge",a:"Frankrike",picks:["1-1","1-3","2-1","2-1","1-3","2-3","1-4","2-2","4-2"]},
   {h:"England",a:"Kroatia",picks:["2-1","1-0","2-0","2-0","3-2","1-3","2-0","2-1","3-1"]},
-  {h:"Nederland",a:"Sverige",picks:["2-0","2-1","2-1","0-1","2-1","3-0","3-1","3-0","7-1"]}
+  {h:"Nederland",a:"Sverige",picks:["2-0","2-1","2-1","0-1","2-1","3-0","3-1","3-0","7-1"]},
+  {h:"Frankrike",a:"Irak",picks:["3-1","3-0","4-1","5-1","4-0","6-0","3-0","5-0","4-1"]},
+  {h:"England",a:"Ghana",picks:["2-1","3-0","3-0","5-0","3-1","4-0","3-0","4-0","5-0"]}
 ];
 const TIPS_WINNER = ["England","Spania","England","Brasil","Spania","Frankrike","Norge","Nederland","Norge"];
 
@@ -614,8 +616,9 @@ let WINNER_RESULT = null; // Faktisk verdensmester – fyll inn når finalen er 
 // Fasit – legg til ettersom kampene spilles. Nøkkel = "Hjemmelag-Bortelag", samme retning som over.
 const RESULTS = {
   "Norge-Irak": "4-1",
-  "England-Kroatia": "4-2"
-  // "Nederland-Sverige": "", "Norge-Senegal": "", "Norge-Frankrike": ""
+  "England-Kroatia": "4-2",
+  "Nederland-Sverige": "5-1"
+  // "Norge-Senegal": "", "Frankrike-Irak": "", "England-Ghana": "", "Norge-Frankrike": ""
 };
 const mKey = m => `${m.h}-${m.a}`;
 function parseScore(s){ const p=String(s).split('-').map(n=>parseInt(n.trim(),10)); return {hg:p[0],ag:p[1]}; }
