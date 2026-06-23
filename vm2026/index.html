@@ -233,7 +233,7 @@
 
   <div id="tipPanel">
     <div class="tip-head" id="lbHead">Tabell</div>
-    <div class="pts-note">Poeng: 1 for riktig utfall · 2 for eksakt resultat · 1 for riktig verdensmester</div>
+    <div class="pts-note">Poeng: 1 for riktig utfall · 3 for eksakt resultat</div>
     <div id="lbBody"></div>
 
     <div class="tip-head">🏆 Hvem vinner VM?</div>
@@ -611,14 +611,15 @@ const TIPS_WINNER = ["England","Spania","England","Brasil","Spania","Frankrike",
 
 // --- Poeng & tabell ---
 // Poengsystem: 3 = eksakt riktig resultat, 1 = riktig utfall (seier/uavgjort), 0 = bom.
-const PTS_EXACT = 2, PTS_OUTCOME = 1, PTS_WINNER = 1;
-let WINNER_RESULT = null; // Faktisk verdensmester – fyll inn når finalen er spilt, f.eks. "Norge"
+const PTS_EXACT = 3, PTS_OUTCOME = 1;
 // Fasit – legg til ettersom kampene spilles. Nøkkel = "Hjemmelag-Bortelag", samme retning som over.
 const RESULTS = {
   "Norge-Irak": "4-1",
   "England-Kroatia": "4-2",
-  "Nederland-Sverige": "5-1"
-  // "Norge-Senegal": "", "Frankrike-Irak": "", "England-Ghana": "", "Norge-Frankrike": ""
+  "Nederland-Sverige": "5-1",
+  "Norge-Senegal": "3-2",
+  "Frankrike-Irak": "3-0"
+  // "England-Ghana": "", "Norge-Frankrike": ""
 };
 const mKey = m => `${m.h}-${m.a}`;
 function parseScore(s){ const p=String(s).split('-').map(n=>parseInt(n.trim(),10)); return {hg:p[0],ag:p[1]}; }
@@ -633,7 +634,6 @@ function scorePick(pick, result){
 function totalFor(i){
   let pts=0;
   TIPS_MATCHES.forEach(m=>{ const r=RESULTS[mKey(m)]; if(r) pts+=scorePick(m.picks[i],r); });
-  if(WINNER_RESULT && TIPS_WINNER[i]===WINNER_RESULT) pts+=PTS_WINNER;
   return pts;
 }
 function exactFor(i){ let n=0; TIPS_MATCHES.forEach(m=>{ const r=RESULTS[mKey(m)]; if(r && scorePick(m.picks[i],r)===PTS_EXACT) n++; }); return n; }
@@ -692,7 +692,7 @@ function renderTipPerson(){
         const cls = sp===null ? '' : (sp===PTS_EXACT ? 'hit-exact' : (sp===PTS_OUTCOME ? 'hit-out' : 'hit-miss'));
         return `<div class="prow ${cls}"><span class="pm">${esc(m.h)} – ${esc(m.a)}</span><span class="ps">${esc(m.picks[i])}</span></div>`;
       }).join('')}
-      <div class="prow ${WINNER_RESULT ? (TIPS_WINNER[i]===WINNER_RESULT?'hit-out':'hit-miss') : ''}"><span class="pm">VM-vinner</span><span class="ps">${FLAG[TIPS_WINNER[i]]||''} ${esc(TIPS_WINNER[i])}</span></div>
+      <div class="prow"><span class="pm">VM-vinner</span><span class="ps">${FLAG[TIPS_WINNER[i]]||''} ${esc(TIPS_WINNER[i])}</span></div>
     </div>`).join('');
 }
 
