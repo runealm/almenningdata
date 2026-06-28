@@ -144,6 +144,12 @@
   .mcard .row{display:flex;align-items:center;justify-content:space-between;margin-top:12px;gap:8px}
   .mcard .time{font-family:'Oswald';font-size:30px;font-weight:700;line-height:1}
   .mcard .time small{display:block;font-size:10.5px;letter-spacing:.1em;color:var(--muted);font-weight:500;text-transform:uppercase}
+  .mcard .score{font-family:'Oswald';font-size:30px;font-weight:700;line-height:1}
+  .mcard .score small{display:block;font-size:10.5px;letter-spacing:.1em;color:var(--muted);font-weight:500;text-transform:uppercase}
+  .mcard .score.res-win{color:var(--good)}
+  .mcard .score.res-loss{color:var(--norway-soft)}
+  .mcard .score.res-draw{color:var(--gold)}
+  .mcard .score.res-neutral{color:var(--ink)}
   .badge{font-family:'Oswald';font-weight:600;font-size:13px;letter-spacing:.05em;padding:5px 11px;border-radius:7px;white-space:nowrap}
   .badge.NRK{background:var(--nrk);color:#03201f}
   .badge.TV2{background:var(--tv2);color:#2b1d00}
@@ -163,6 +169,24 @@
   .team.is-no .nm{color:var(--norway-soft);font-weight:600}
   .team.match .nm{color:var(--gold);font-weight:600}
   .where{font-size:11px;color:var(--muted);margin:8px 2px 4px;border-top:1px dashed var(--line);padding-top:8px}
+  .stbl{margin-top:2px}
+  .strow{display:flex;align-items:center;gap:9px;padding:6px 5px;border-radius:8px}
+  .strow + .strow{border-top:1px solid rgba(39,52,92,.5)}
+  .strow .pos{font-family:'Oswald';font-weight:700;width:18px;text-align:center;font-size:13px;color:var(--muted)}
+  .strow.adv .pos{color:var(--good)}
+  .strow.third .pos{color:var(--gold)}
+  .qok{color:var(--good);font-size:11px;font-weight:700}
+  .strow .fl{font-size:17px;width:22px;text-align:center;flex:none}
+  .strow .nmwrap{flex:1;min-width:0}
+  .strow .nm{font-size:14px;line-height:1.2;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .strow.no .nm{color:var(--norway-soft);font-weight:600}
+  .strow.match .nm{color:var(--gold);font-weight:600}
+  .strow .det{font-size:10px;color:var(--muted);letter-spacing:.02em}
+  .strow .pts{font-family:'Oswald';font-weight:700;font-size:16px;min-width:20px;text-align:right}
+  .strow.out{opacity:.5}
+  .glegend{font-size:11.5px;color:var(--muted);margin:-4px 2px 14px;display:flex;gap:16px;flex-wrap:wrap}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .dot.g{background:var(--good)} .dot.y{background:var(--gold)}
 
   .noresult{text-align:center;color:var(--muted);padding:30px;font-size:15px;display:none}
 
@@ -233,7 +257,7 @@
 
   <div id="tipPanel">
     <div class="tip-head" id="lbHead">Tabell</div>
-    <div class="pts-note">Poeng: 1 for riktig utfall · 3 for eksakt resultat</div>
+    <div class="pts-note">Poeng: 1 for riktig utfall · 3 for eksakt resultat · 5 for riktig verdensmester</div>
     <div id="lbBody"></div>
 
     <div class="tip-head">🏆 Hvem vinner VM?</div>
@@ -248,17 +272,18 @@
     <div class="tip-note">Tabellen oppdateres automatisk når nye resultater legges inn.</div>
   </div>
 
-  <div class="section-title" id="t-no">🇳🇴 Norges kamper · Gruppe I</div>
+  <div class="section-title" id="t-no">🇳🇴 Norges kamper</div>
   <div class="no-matches" id="noMatches"></div>
 
   <div class="section-title">Åpning &amp; finale</div>
   <div class="no-matches" id="bigMatches"></div>
 
-  <div class="section-title" id="t-groups">Alle grupper</div>
+  <div class="section-title" id="t-groups">Gruppetabeller · sluttstilling</div>
+  <div class="glegend"><span><span class="dot g"></span>Videre til sluttspillet (1.–2. + 8 beste 3.-plasser)</span><span><span class="dot" style="background:var(--muted)"></span>Slått ut</span></div>
   <div class="groups" id="groups"></div>
   <div class="noresult" id="noresult">Fant ingen lag som matcher søket. Prøv et annet navn.</div>
 
-  <div class="section-title" id="t-ko">Sluttspillet · lag avgjøres av gruppespillet</div>
+  <div class="section-title" id="t-ko">Sluttspillet · 16-delsfinalen er satt</div>
   <div class="ko" id="ko"></div>
 
   <div class="section-title">Om dataene &amp; odds</div>
@@ -306,29 +331,78 @@ const FLAG = {
 };
 
 const GROUPS = {
-  "A":{teams:["Mexico","Sør-Afrika","Sør-Korea","Tsjekkia"], where:"Mexico by, Guadalajara, Monterrey & Atlanta"},
-  "B":{teams:["Canada","Bosnia-Hercegovina","Qatar","Sveits"], where:"Toronto, Vancouver, San Francisco, Los Angeles & Seattle"},
-  "C":{teams:["Brasil","Marokko","Haiti","Skottland"], where:"New York, Boston, Philadelphia, Miami & Atlanta"},
-  "D":{teams:["USA","Paraguay","Australia","Tyrkia"], where:"Los Angeles, Vancouver, Seattle & San Francisco"},
-  "E":{teams:["Tyskland","Curaçao","Elfenbenskysten","Ecuador"], where:"Houston, Philadelphia, Toronto, Kansas City & New York"},
-  "F":{teams:["Nederland","Japan","Sverige","Tunisia"], where:"Dallas, Monterrey, Houston & Kansas City"},
-  "G":{teams:["Belgia","Egypt","Iran","New Zealand"], where:"Seattle, Los Angeles & Vancouver"},
-  "H":{teams:["Spania","Kapp Verde","Saudi-Arabia","Uruguay"], where:"Atlanta, Miami, Houston & Guadalajara"},
-  "I":{teams:["Frankrike","Senegal","Irak","Norge"], where:"New York, Boston, Philadelphia & Toronto"},
-  "J":{teams:["Argentina","Algerie","Østerrike","Jordan"], where:"Kansas City, San Francisco & Dallas"},
-  "K":{teams:["Portugal","DR Kongo","Usbekistan","Colombia"], where:"Houston, Mexico by, Guadalajara & Miami"},
-  "L":{teams:["England","Kroatia","Ghana","Panama"], where:"Dallas, Toronto, Boston, New York & Philadelphia"}
+  "A":{where:"Mexico by, Guadalajara, Monterrey & Atlanta", table:[
+    {t:"Mexico",w:3,d:0,l:0,gf:6,ga:0,p:9},
+    {t:"Sør-Afrika",w:1,d:1,l:1,gf:2,ga:3,p:4},
+    {t:"Sør-Korea",w:1,d:0,l:2,gf:2,ga:3,p:3},
+    {t:"Tsjekkia",w:0,d:1,l:2,gf:2,ga:6,p:1}]},
+  "B":{where:"Toronto, Vancouver, San Francisco, Los Angeles & Seattle", table:[
+    {t:"Sveits",w:2,d:1,l:0,gf:7,ga:3,p:7},
+    {t:"Canada",w:1,d:1,l:1,gf:8,ga:3,p:4},
+    {t:"Bosnia-Hercegovina",w:1,d:1,l:1,gf:5,ga:6,p:4},
+    {t:"Qatar",w:0,d:1,l:2,gf:2,ga:10,p:1}]},
+  "C":{where:"New York, Boston, Philadelphia, Miami & Atlanta", table:[
+    {t:"Brasil",w:2,d:1,l:0,gf:7,ga:1,p:7},
+    {t:"Marokko",w:2,d:1,l:0,gf:6,ga:3,p:7},
+    {t:"Skottland",w:1,d:0,l:2,gf:1,ga:4,p:3},
+    {t:"Haiti",w:0,d:0,l:3,gf:2,ga:8,p:0}]},
+  "D":{where:"Los Angeles, Vancouver, Seattle & San Francisco", table:[
+    {t:"USA",w:2,d:0,l:1,gf:8,ga:4,p:6},
+    {t:"Australia",w:1,d:1,l:1,gf:2,ga:2,p:4},
+    {t:"Paraguay",w:1,d:1,l:1,gf:2,ga:4,p:4},
+    {t:"Tyrkia",w:1,d:0,l:2,gf:3,ga:5,p:3}]},
+  "E":{where:"Houston, Philadelphia, Toronto, Kansas City & New York", table:[
+    {t:"Tyskland",w:2,d:0,l:1,gf:10,ga:4,p:6},
+    {t:"Elfenbenskysten",w:2,d:0,l:1,gf:4,ga:2,p:6},
+    {t:"Ecuador",w:1,d:1,l:1,gf:2,ga:2,p:4},
+    {t:"Curaçao",w:0,d:1,l:2,gf:1,ga:9,p:1}]},
+  "F":{where:"Dallas, Monterrey, Houston & Kansas City", table:[
+    {t:"Nederland",w:2,d:1,l:0,gf:10,ga:4,p:7},
+    {t:"Japan",w:1,d:2,l:0,gf:7,ga:3,p:5},
+    {t:"Sverige",w:1,d:1,l:1,gf:7,ga:7,p:4},
+    {t:"Tunisia",w:0,d:0,l:3,gf:2,ga:12,p:0}]},
+  "G":{where:"Seattle, Los Angeles & Vancouver", table:[
+    {t:"Belgia",w:1,d:2,l:0,gf:6,ga:2,p:5},
+    {t:"Egypt",w:1,d:2,l:0,gf:5,ga:3,p:5},
+    {t:"Iran",w:0,d:3,l:0,gf:3,ga:3,p:3},
+    {t:"New Zealand",w:0,d:1,l:2,gf:4,ga:10,p:1}]},
+  "H":{where:"Atlanta, Miami, Houston & Guadalajara", table:[
+    {t:"Spania",w:2,d:1,l:0,gf:5,ga:0,p:7},
+    {t:"Kapp Verde",w:0,d:3,l:0,gf:2,ga:2,p:3},
+    {t:"Uruguay",w:0,d:2,l:1,gf:3,ga:4,p:2},
+    {t:"Saudi-Arabia",w:0,d:2,l:1,gf:1,ga:5,p:2}]},
+  "I":{where:"New York, Boston, Philadelphia & Toronto", table:[
+    {t:"Frankrike",w:3,d:0,l:0,gf:10,ga:2,p:9},
+    {t:"Norge",w:2,d:0,l:1,gf:8,ga:7,p:6},
+    {t:"Senegal",w:1,d:0,l:2,gf:8,ga:6,p:3},
+    {t:"Irak",w:0,d:0,l:3,gf:1,ga:12,p:0}]},
+  "J":{where:"Kansas City, San Francisco & Dallas", table:[
+    {t:"Argentina",w:3,d:0,l:0,gf:8,ga:1,p:9},
+    {t:"Østerrike",w:1,d:1,l:1,gf:6,ga:6,p:4},
+    {t:"Algerie",w:1,d:1,l:1,gf:5,ga:7,p:4},
+    {t:"Jordan",w:0,d:0,l:3,gf:3,ga:8,p:0}]},
+  "K":{where:"Houston, Mexico by, Guadalajara & Miami", table:[
+    {t:"Colombia",w:2,d:1,l:0,gf:4,ga:1,p:7},
+    {t:"Portugal",w:1,d:2,l:0,gf:6,ga:1,p:5},
+    {t:"DR Kongo",w:1,d:1,l:1,gf:4,ga:3,p:4},
+    {t:"Usbekistan",w:0,d:0,l:3,gf:2,ga:11,p:0}]},
+  "L":{where:"Dallas, Toronto, Boston, New York & Philadelphia", table:[
+    {t:"England",w:2,d:1,l:0,gf:6,ga:2,p:7},
+    {t:"Kroatia",w:2,d:0,l:1,gf:5,ga:5,p:6},
+    {t:"Ghana",w:1,d:1,l:1,gf:2,ga:2,p:4},
+    {t:"Panama",w:0,d:0,l:3,gf:0,ga:4,p:0}]}
 };
 
 // Norges kamper (kuratert visning)
 const NO_MATCHES = [
   {when:"Onsdag 17. juni", teams:["Irak","Norge"], time:"00:00", note:"natt til ons.", venue:"Boston", ch:"TV2", night:true},
   {when:"Tirsdag 23. juni", teams:["Norge","Senegal"], time:"02:00", note:"natt til tir.", venue:"New York", ch:"NRK", night:true},
-  {when:"Fredag 26. juni", teams:["Norge","Frankrike"], time:"21:00", note:"beste sendetid", venue:"Boston", ch:"NRK", night:false}
+  {when:"Fredag 26. juni", teams:["Norge","Frankrike"], time:"21:00", note:"beste sendetid", venue:"Boston", ch:"NRK", night:false},
+  {when:"Tirsdag 30. juni · 16-delsfinale", teams:["Elfenbenskysten","Norge"], time:"19:00", note:"Norge er videre!", venue:"Dallas", ch:"TV2", night:false}
 ];
 
 const BIG_MATCHES = [
-  {when:"Torsdag 11. juni · Åpningskamp", teams:["Mexico","Sør-Afrika"], time:"21:00", note:"VM sparkes i gang", venue:"Mexico by", ch:"TV2", night:false},
+  {when:"Torsdag 11. juni · Åpningskamp", teams:["Mexico","Sør-Afrika"], time:"21:00", note:"VM sparkes i gang", venue:"Mexico by", ch:"TV2", night:false, res:"2-0"},
   {when:"Søndag 19. juli · Finalen", teams:["?","?"], time:"21:00", note:"avgjøres underveis", venue:"New York", ch:"NRK", night:false}
 ];
 
@@ -416,32 +490,32 @@ const ALL_MATCHES = [
   {d:"2026-06-28",t:"01:30",h:"DR Kongo",a:"Usbekistan",g:"K",ch:"NRK",v:"Atlanta"},
   {d:"2026-06-28",t:"04:00",h:"Algerie",a:"Østerrike",g:"J",ch:"NRK",v:"Kansas City"},
   {d:"2026-06-28",t:"04:00",h:"Jordan",a:"Argentina",g:"J",ch:"NRK",v:"Dallas"},
-  // Sluttspill – 16-delsfinale (R32)
-  {d:"2026-06-28",t:"21:00",h:"2.-plass gruppe A",a:"2.-plass gruppe B",round:"16-delsfinale 1",ch:"TV2",v:"Los Angeles"},
-  {d:"2026-06-29",t:"19:00",h:"Vinner gruppe C",a:"2.-plass gruppe F",round:"16-delsfinale 4",ch:"TV2",v:"Houston"},
-  {d:"2026-06-29",t:"22:30",h:"Vinner gruppe E",a:"3.-plass (ABCDF)",round:"16-delsfinale 2",ch:"TV2",v:"Boston"},
-  {d:"2026-06-30",t:"03:00",h:"Vinner gruppe F",a:"2.-plass gruppe C",round:"16-delsfinale 3",ch:"TV2",v:"Monterrey"},
-  {d:"2026-06-30",t:"19:00",h:"2.-plass gruppe E",a:"2.-plass gruppe I",round:"16-delsfinale 6",ch:"TV2",v:"Dallas"},
-  {d:"2026-06-30",t:"23:00",h:"Vinner gruppe I",a:"3.-plass (CDFGH)",round:"16-delsfinale 5",ch:"TV2",v:"New York"},
-  {d:"2026-07-01",t:"03:00",h:"Vinner gruppe A",a:"3.-plass (CEFHI)",round:"16-delsfinale 7",ch:"TV2",v:"Mexico by"},
-  {d:"2026-07-01",t:"18:00",h:"Vinner gruppe L",a:"3.-plass (EHIJK)",round:"16-delsfinale 8",ch:"TV2",v:"Atlanta"},
-  {d:"2026-07-01",t:"22:00",h:"Vinner gruppe G",a:"3.-plass (AEHIJ)",round:"16-delsfinale 10",ch:"TV2",v:"Seattle"},
-  {d:"2026-07-02",t:"02:00",h:"Vinner gruppe D",a:"3.-plass (BEFIJ)",round:"16-delsfinale 9",ch:"TV2",v:"San Francisco"},
-  {d:"2026-07-02",t:"21:00",h:"Vinner gruppe H",a:"2.-plass gruppe J",round:"16-delsfinale 12",ch:"TV2",v:"Los Angeles"},
-  {d:"2026-07-03",t:"01:00",h:"2.-plass gruppe K",a:"2.-plass gruppe L",round:"16-delsfinale 11",ch:"TV2",v:"Toronto"},
-  {d:"2026-07-03",t:"05:00",h:"Vinner gruppe B",a:"3.-plass (EFGIJ)",round:"16-delsfinale 13",ch:"TV2",v:"Vancouver"},
-  {d:"2026-07-03",t:"20:00",h:"2.-plass gruppe D",a:"2.-plass gruppe G",round:"16-delsfinale 16",ch:"TV2",v:"San Francisco"},
-  {d:"2026-07-04",t:"00:00",h:"Vinner gruppe J",a:"2.-plass gruppe H",round:"16-delsfinale 14",ch:"TV2",v:"Miami"},
-  {d:"2026-07-04",t:"03:30",h:"Vinner gruppe K",a:"3.-plass (DEIJL)",round:"16-delsfinale 15",ch:"TV2",v:"Kansas City"},
-  // Åttedelsfinale (R16)
-  {d:"2026-07-04",t:"19:00",h:"Vinner 16-del 1",a:"Vinner 16-del 3",round:"Åttedelsfinale 2",ch:"NRK",v:"Houston"},
-  {d:"2026-07-04",t:"23:00",h:"Vinner 16-del 2",a:"Vinner 16-del 5",round:"Åttedelsfinale 1",ch:"NRK",v:"Philadelphia"},
-  {d:"2026-07-05",t:"22:00",h:"Vinner 16-del 4",a:"Vinner 16-del 6",round:"Åttedelsfinale 3",ch:"NRK",v:"New York"},
-  {d:"2026-07-06",t:"02:00",h:"Vinner 16-del 7",a:"Vinner 16-del 8",round:"Åttedelsfinale 4",ch:"NRK",v:"Mexico by"},
-  {d:"2026-07-06",t:"21:00",h:"Vinner 16-del 11",a:"Vinner 16-del 2",round:"Åttedelsfinale 5",ch:"NRK",v:"Dallas"},
-  {d:"2026-07-07",t:"02:00",h:"Vinner 16-del 9",a:"Vinner 16-del 10",round:"Åttedelsfinale 6",ch:"NRK",v:"Seattle"},
-  {d:"2026-07-07",t:"18:00",h:"Vinner 16-del 14",a:"Vinner 16-del 16",round:"Åttedelsfinale 7",ch:"NRK",v:"Atlanta"},
-  {d:"2026-07-07",t:"22:00",h:"Vinner 16-del 13",a:"Vinner 16-del 15",round:"Åttedelsfinale 8",ch:"NRK",v:"Vancouver"},
+  // Sluttspill – 16-delsfinale (lag bekreftet)
+  {d:"2026-06-28",t:"21:00",h:"Sør-Afrika",a:"Canada",round:"16-delsfinale",ch:"NRK"},
+  {d:"2026-06-29",t:"19:00",h:"Brasil",a:"Japan",round:"16-delsfinale",ch:"TV2"},
+  {d:"2026-06-29",t:"22:30",h:"Tyskland",a:"Paraguay",round:"16-delsfinale",ch:"TBA"},
+  {d:"2026-06-30",t:"03:00",h:"Nederland",a:"Marokko",round:"16-delsfinale",ch:"TV2"},
+  {d:"2026-06-30",t:"19:00",h:"Elfenbenskysten",a:"Norge",round:"16-delsfinale",ch:"TV2"},
+  {d:"2026-06-30",t:"23:00",h:"Frankrike",a:"Sverige",round:"16-delsfinale",ch:"TBA"},
+  {d:"2026-07-01",t:"03:00",h:"Mexico",a:"Ecuador",round:"16-delsfinale",ch:"TBA"},
+  {d:"2026-07-01",t:"18:00",h:"England",a:"DR Kongo",round:"16-delsfinale",ch:"TBA"},
+  {d:"2026-07-01",t:"22:00",h:"Belgia",a:"Senegal",round:"16-delsfinale",ch:"TBA"},
+  {d:"2026-07-02",t:"02:00",h:"USA",a:"Bosnia-Hercegovina",round:"16-delsfinale",ch:"TBA"},
+  {d:"2026-07-02",t:"21:00",h:"Spania",a:"Østerrike",round:"16-delsfinale",ch:"TBA"},
+  {d:"2026-07-03",t:"01:00",h:"Portugal",a:"Kroatia",round:"16-delsfinale",ch:"TBA"},
+  {d:"2026-07-03",t:"05:00",h:"Sveits",a:"Algerie",round:"16-delsfinale",ch:"TBA"},
+  {d:"2026-07-03",t:"20:00",h:"Australia",a:"Egypt",round:"16-delsfinale",ch:"TBA"},
+  {d:"2026-07-04",t:"00:00",h:"Argentina",a:"Kapp Verde",round:"16-delsfinale",ch:"TBA"},
+  {d:"2026-07-04",t:"03:30",h:"Colombia",a:"Ghana",round:"16-delsfinale",ch:"TBA"},
+  // Åttedelsfinale (lag avgjøres av 16-delsfinalene)
+  {d:"2026-07-04",t:"19:00",h:"Sør-Afrika/Canada",a:"Nederland/Marokko",round:"Åttedelsfinale",ch:"NRK"},
+  {d:"2026-07-04",t:"23:00",h:"Tyskland/Paraguay",a:"Frankrike/Sverige",round:"Åttedelsfinale",ch:"NRK"},
+  {d:"2026-07-05",t:"22:00",h:"Brasil/Japan",a:"Elfenbenskysten/Norge",round:"Åttedelsfinale",ch:"NRK"},
+  {d:"2026-07-06",t:"02:00",h:"Mexico/Ecuador",a:"England/DR Kongo",round:"Åttedelsfinale",ch:"NRK"},
+  {d:"2026-07-06",t:"21:00",h:"Portugal/Kroatia",a:"Spania/Østerrike",round:"Åttedelsfinale",ch:"NRK"},
+  {d:"2026-07-07",t:"02:00",h:"USA/Bosnia",a:"Belgia/Senegal",round:"Åttedelsfinale",ch:"NRK"},
+  {d:"2026-07-07",t:"18:00",h:"Argentina/Kapp Verde",a:"Australia/Egypt",round:"Åttedelsfinale",ch:"NRK"},
+  {d:"2026-07-07",t:"22:00",h:"Sveits/Algerie",a:"Colombia/Ghana",round:"Åttedelsfinale",ch:"NRK"},
   // Kvartfinale
   {d:"2026-07-09",t:"22:00",h:"Vinner 8-del 1",a:"Vinner 8-del 2",round:"Kvartfinale 1",ch:"TV2",v:"Boston"},
   {d:"2026-07-10",t:"21:00",h:"Vinner 8-del 5",a:"Vinner 8-del 6",round:"Kvartfinale 2",ch:"TV2",v:"Los Angeles"},
@@ -463,27 +537,54 @@ const MNO=["januar","februar","mars","april","mai","juni","juli","august","septe
 const esc = s => String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const teamHTML = n => `<span class="fl">${FLAG[n]||"🏳️"}</span><span class="nm">${esc(n)}</span>`;
 
+function findResult(teams){
+  const a=teams[0],b=teams[1];
+  if(RESULTS[a+'-'+b]) return RESULTS[a+'-'+b];
+  if(RESULTS[b+'-'+a]){ const p=RESULTS[b+'-'+a].split('-'); return p[1]+'-'+p[0]; }
+  return null;
+}
 function matchCard(m, isNo){
   const vs = `${FLAG[m.teams[0]]||""} ${esc(m.teams[0])} – ${esc(m.teams[1])} ${FLAG[m.teams[1]]||""}`;
+  const score = m.res || findResult(m.teams);
+  let main;
+  if(score){
+    const g=score.split('-').map(Number);
+    let cls='res-neutral';
+    const ni=m.teams.indexOf('Norge');
+    if(ni>=0){ const my=g[ni], opp=g[ni===0?1:0]; cls = my>opp?'res-win':(my<opp?'res-loss':'res-draw'); }
+    main = `<div class="score ${cls}">${g[0]}–${g[1]}<small>Slutt · kl. ${m.time}</small></div>`;
+  } else {
+    main = `<div class="time">${m.time}<small>${esc(m.note)}</small></div>`;
+  }
   return `<div class="mcard ${isNo?'no':''}" data-ch="${m.ch}">
     ${m.night?'<div class="nightflag">☕ NATTEKAMP</div>':''}
     <div class="when">${esc(m.when)}</div>
     <div class="teams">${vs}</div>
     <div class="venue">📍 ${esc(m.venue)}</div>
     <div class="row">
-      <div class="time">${m.time}<small>${esc(m.note)}</small></div>
+      ${main}
       <div class="badge ${m.ch}">${m.ch==='TV2'?'TV 2':m.ch}</div>
     </div>
   </div>`;
 }
 
-document.getElementById('noMatches').innerHTML = NO_MATCHES.map(m=>matchCard(m,true)).join('');
-document.getElementById('bigMatches').innerHTML = BIG_MATCHES.map(m=>matchCard(m,false)).join('');
-
+const ADV_THIRDS = ["Bosnia-Hercegovina","Paraguay","Ecuador","Sverige","Senegal","Algerie","DR Kongo","Ghana"];
 document.getElementById('groups').innerHTML = Object.entries(GROUPS).map(([g,o])=>`
-  <div class="gcard" data-teams="${o.teams.join('|').toLowerCase()}">
+  <div class="gcard" data-teams="${o.table.map(r=>r.t.toLowerCase()).join('|')}">
     <h3>Gruppe <b>${g}</b></h3>
-    ${o.teams.map(t=>`<div class="team ${t==='Norge'?'is-no':''}" data-team="${t.toLowerCase()}">${teamHTML(t)}</div>`).join('')}
+    <div class="stbl">
+      ${o.table.map((r,i)=>{
+        const gd=r.gf-r.ga;
+        const qual = i<2 || (i===2 && ADV_THIRDS.includes(r.t));
+        const cls=(qual?'adv':'out')+(r.t==='Norge'?' no':'');
+        return `<div class="strow ${cls}" data-team="${r.t.toLowerCase()}">
+          <span class="pos">${i+1}</span>
+          <span class="fl">${FLAG[r.t]||'🏳️'}</span>
+          <span class="nmwrap"><span class="nm">${esc(r.t)}${qual?' <span class="qok">✓</span>':''}</span><span class="det">${r.w}-${r.d}-${r.l} · ${r.gf}-${r.ga} · ${gd>0?'+':''}${gd}</span></span>
+          <span class="pts">${r.p}</span>
+        </div>`;
+      }).join('')}
+    </div>
     <div class="where">📍 ${esc(o.where)}</div>
   </div>`).join('');
 
@@ -509,15 +610,15 @@ function runSearch(){
     const anyPartial = term && teams.split('|').some(t=>t.includes(term));
     if(!term){
       card.classList.remove('dim','hit');
-      card.querySelectorAll('.team').forEach(t=>t.classList.remove('match'));
+      card.querySelectorAll('.strow').forEach(r=>r.classList.remove('match'));
     } else if(anyPartial){
       card.classList.remove('dim'); card.classList.add('hit'); hits++;
-      card.querySelectorAll('.team').forEach(t=>{
-        t.classList.toggle('match', t.dataset.team.includes(term) && t.dataset.team!=='norge');
+      card.querySelectorAll('.strow').forEach(r=>{
+        r.classList.toggle('match', r.dataset.team.includes(term));
       });
     } else {
       card.classList.add('dim'); card.classList.remove('hit');
-      card.querySelectorAll('.team').forEach(t=>t.classList.remove('match'));
+      card.querySelectorAll('.strow').forEach(r=>r.classList.remove('match'));
     }
   });
   noresult.style.display = (term && hits===0) ? 'block' : 'none';
@@ -607,13 +708,15 @@ const TIPS_MATCHES = [
   {h:"Frankrike",a:"Irak",picks:["3-1","3-0","4-1","5-1","4-0","6-0","3-0","5-0","4-1"]},
   {h:"England",a:"Ghana",picks:["2-1","3-0","3-0","5-0","3-1","4-0","3-0","4-0","5-0"]},
   {h:"Sverige",a:"Japan",picks:["0-1","2-2","1-4","0-2","1-2","0-3","1-3","0-3","1-4"]},
-  {h:"England",a:"Panama",picks:["3-1","2-0","3-0","3-1","3-0","4-0","3-0","2-0","1-0"]}
+  {h:"England",a:"Panama",picks:["3-1","2-0","3-0","3-1","3-0","4-0","3-0","2-0","1-0"]},
+  {h:"Norge",a:"Elfenbenskysten",picks:["–","–","4-1","4-1","–","4-0","–","3-1","4-2"]}
 ];
 const TIPS_WINNER = ["England","Spania","England","Brasil","Spania","Frankrike","Norge","Nederland","Norge"];
 
 // --- Poeng & tabell ---
 // Poengsystem: 3 = eksakt riktig resultat, 1 = riktig utfall (seier/uavgjort), 0 = bom.
-const PTS_EXACT = 3, PTS_OUTCOME = 1;
+const PTS_EXACT = 3, PTS_OUTCOME = 1, PTS_WINNER = 5;
+let WINNER_RESULT = null; // Faktisk verdensmester – fyll inn når finalen er spilt, f.eks. "Norge"
 // Fasit – legg til ettersom kampene spilles. Nøkkel = "Hjemmelag-Bortelag", samme retning som over.
 const RESULTS = {
   "Norge-Irak": "4-1",
@@ -621,8 +724,11 @@ const RESULTS = {
   "Nederland-Sverige": "5-1",
   "Norge-Senegal": "3-2",
   "Frankrike-Irak": "3-0",
-  "England-Ghana": "0-0"
-  // "Norge-Frankrike": "", "Sverige-Japan": "", "England-Panama": ""
+  "England-Ghana": "0-0",
+  "Norge-Frankrike": "1-4",
+  "Sverige-Japan": "1-1",
+  "England-Panama": "2-0"
+  // "Norge-Elfenbenskysten": ""
 };
 const mKey = m => `${m.h}-${m.a}`;
 function parseScore(s){ const p=String(s).split('-').map(n=>parseInt(n.trim(),10)); return {hg:p[0],ag:p[1]}; }
@@ -637,6 +743,7 @@ function scorePick(pick, result){
 function totalFor(i){
   let pts=0;
   TIPS_MATCHES.forEach(m=>{ const r=RESULTS[mKey(m)]; if(r) pts+=scorePick(m.picks[i],r); });
+  if(WINNER_RESULT && TIPS_WINNER[i]===WINNER_RESULT) pts+=PTS_WINNER;
   return pts;
 }
 function exactFor(i){ let n=0; TIPS_MATCHES.forEach(m=>{ const r=RESULTS[mKey(m)]; if(r && scorePick(m.picks[i],r)===PTS_EXACT) n++; }); return n; }
@@ -695,7 +802,7 @@ function renderTipPerson(){
         const cls = sp===null ? '' : (sp===PTS_EXACT ? 'hit-exact' : (sp===PTS_OUTCOME ? 'hit-out' : 'hit-miss'));
         return `<div class="prow ${cls}"><span class="pm">${esc(m.h)} – ${esc(m.a)}</span><span class="ps">${esc(m.picks[i])}</span></div>`;
       }).join('')}
-      <div class="prow"><span class="pm">VM-vinner</span><span class="ps">${FLAG[TIPS_WINNER[i]]||''} ${esc(TIPS_WINNER[i])}</span></div>
+      <div class="prow ${WINNER_RESULT ? (TIPS_WINNER[i]===WINNER_RESULT?'hit-exact':'hit-miss') : ''}"><span class="pm">VM-vinner</span><span class="ps">${FLAG[TIPS_WINNER[i]]||''} ${esc(TIPS_WINNER[i])}</span></div>
     </div>`).join('');
 }
 
@@ -716,6 +823,8 @@ document.querySelectorAll('.tip-toggle .chip').forEach(c=>{
     c.classList.add('active'); tipView=c.dataset.view; renderTip();
   });
 });
+document.getElementById('noMatches').innerHTML = NO_MATCHES.map(m=>matchCard(m,true)).join('');
+document.getElementById('bigMatches').innerHTML = BIG_MATCHES.map(m=>matchCard(m,false)).join('');
 </script>
 </body>
 </html>
