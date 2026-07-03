@@ -121,6 +121,7 @@
   .lbrow.lead .lbrank{color:var(--gold)}
   .lbname{flex:1;font-size:15px;display:flex;align-items:center;gap:8px}
   .lbsub{font-size:10.5px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+  .lbtitle{display:inline-block;margin-left:8px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(244,201,93,.5);border-radius:999px;padding:2px 8px;vertical-align:middle}
   .lbpts{font-family:'Oswald';font-weight:700;font-size:18px}
   .fasit{font-family:'Inter';font-weight:600;font-size:12px;color:var(--good);background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.3);padding:2px 8px;border-radius:6px;margin-left:8px;white-space:nowrap}
   .fasit.pending{color:var(--muted);background:transparent;border-color:var(--line)}
@@ -764,7 +765,7 @@ function renderStandings(){
     if(r.pts!==prev){ rank=idx+1; prev=r.pts; }
     return `<div class="lbrow ${rank===1&&played>0?'lead':''}">
       <span class="lbrank">${rank}.</span>
-      <span class="lbname">${esc(r.name)}${r.exact?`<span class="lbsub">${r.exact} eksakt</span>`:''}</span>
+      <span class="lbname">${esc(r.name)}${rank===1&&played>0?'<span class="lbtitle">👑 Serieleder</span>':''}${r.exact?`<span class="lbsub">${r.exact} eksakt</span>`:''}</span>
       <span class="lbpts">${r.pts} p</span>
     </div>`;
   }).join('');
