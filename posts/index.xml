@@ -12,16 +12,9 @@
 			<copyright>2026 Almenning Data</copyright>
 		
 		
-			<lastBuildDate>Fri, 03 Jul 2026 00:00:00 +0000</lastBuildDate>
+			<lastBuildDate>Wed, 06 May 2026 00:00:00 +0000</lastBuildDate>
 		
 			<atom:link href="https://almenningdata.no/posts/index.xml" rel="self" type="application/rss+xml" />
-			<item>
-				<title>test</title>
-				<link>https://almenningdata.no/posts/test/</link>
-				<pubDate>Fri, 03 Jul 2026 00:00:00 +0000</pubDate>
-				<guid>https://almenningdata.no/posts/test/</guid>
-				<description>&lt;p&gt;Dette er jo en fin test. Legger ved et bilde også.&lt;/p&gt;&#xA;&lt;p&gt;!&lt;img src=&#34;https://almenningdata.no/images/Pasted%20image%2020260703123413.png&#34; alt=&#34;Image Description&#34;&gt;&lt;/p&gt;</description>
-			</item>
 			<item>
 				<title>Det lønner seg å være illojal</title>
 				<link>https://almenningdata.no/posts/det-l%C3%B8nner-seg-%C3%A5-v%C3%A6re-illojal/</link>
