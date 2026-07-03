@@ -114,6 +114,9 @@
   .prow .pm{color:var(--muted)}
   .prow .ps{font-family:'Oswald';font-weight:700}
   .tip-note{background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:14px;color:var(--muted);font-size:13px;text-align:center;margin-top:8px}
+  .lbfoot{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
+  .fpill{font-size:12px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+  .fpill b{color:var(--ink);font-weight:600}
   .pts-note{font-size:11.5px;color:var(--muted);text-align:center;margin:0 0 8px}
   .lbrow{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:6px}
   .lbrow.lead{border-color:var(--gold);background:rgba(244,201,93,.08)}
@@ -270,6 +273,7 @@
     </div>
     <div class="tip-head" id="tipBodyHead">Kamptips</div>
     <div id="tipBody"></div>
+    <div class="lbfoot" id="tipFooter"></div>
     <div class="tip-note">Tabellen oppdateres automatisk når nye resultater legges inn.</div>
   </div>
 
@@ -814,7 +818,28 @@ function renderTipPerson(){
 }
 
 let tipView='kamp';
-function renderTip(){ renderStandings(); renderTipWinner(); tipView==='kamp' ? renderTipKamp() : renderTipPerson(); }
+function renderTipFooter(){
+  const el=document.getElementById('tipFooter'); if(!el) return;
+  const played = TIPS_MATCHES.filter(m=>RESULTS[mKey(m)]).length;
+  if(played===0){ el.innerHTML=''; return; }
+  const remaining = TIPS_MATCHES.length - played;
+  const rows = TIPPERS.map((t,i)=>({name:t, pts:totalFor(i), exact:exactFor(i)}))
+    .sort((a,b)=> b.pts-a.pts || b.exact-a.exact || a.name.localeCompare(b.name));
+  const leaders = rows.filter(r=>r.pts===rows[0].pts);
+  const lead = leaders.length>1 ? `Delt: ${leaders.map(l=>esc(l.name)).join(' & ')}` : esc(rows[0].name);
+  const second = rows.find(r=>r.pts!==rows[0].pts);
+  const gap = second ? rows[0].pts - second.pts : 0;
+  const maxExact = Math.max(...rows.map(r=>r.exact));
+  const sharp = rows.filter(r=>r.exact===maxExact && maxExact>0).map(r=>esc(r.name));
+  const pills = [
+    `<span class="fpill">👑 Leder: <b>${lead}</b></span>`,
+    (leaders.length===1 && gap>0) ? `<span class="fpill">⚡ Forsprang: <b>+${gap} p</b></span>` : '',
+    sharp.length ? `<span class="fpill">🎯 Flest blink: <b>${sharp.join(', ')}</b> (${maxExact})</span>` : '',
+    `<span class="fpill">⏳ Kamper igjen: <b>${remaining}</b></span>`
+  ].filter(Boolean).join('');
+  el.innerHTML = pills;
+}
+function renderTip(){ renderStandings(); renderTipWinner(); renderTipFooter(); tipView==='kamp' ? renderTipKamp() : renderTipPerson(); }
 
 const tipPanel=document.getElementById('tipPanel');
 let tipOpen=false;
