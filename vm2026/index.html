@@ -719,7 +719,12 @@ const TIPS_MATCHES = [
   {h:"Sverige",a:"Frankrike",picks:["0-3","2-5","1-5","1-3","1-4","0-5","1-3","0-4","1-7"]},
   {h:"Norge",a:"Brasil",picks:["0-2","3-2","2-1","2-3","2-1","2-2","1-2","1-0","2-1"]},
   {h:"Canada",a:"Marokko",picks:["0-2","1-2","0-3","0-2","1-4","3-0","1-2","0-3","3-2"]},
-  {h:"Frankrike",a:"Paraguay",picks:["2-0","3-1","3-1","4-1","3-1","3-0","2-0","2-0","3-4"]}
+  {h:"Frankrike",a:"Paraguay",picks:["2-0","3-1","3-1","4-1","3-1","3-0","2-0","2-0","3-4"]},
+  {h:"Mexico",a:"England",picks:["1-3","2-2","1-2","2-3","2-1","3-3","1-0","2-1","1-2"]},
+  {h:"Norge",a:"England",picks:["1-3","1-1","2-1","3-1","2-0","3-2","2-1","2-1","3-1"]},
+  {h:"Frankrike",a:"Marokko",picks:["2-0","2-1","2-2","2-1","3-1","3-1","2-0","2-0","2-0"]},
+  {h:"Spania",a:"Belgia",picks:["4-1","1-1","3-1","2-0","3-2","3-0","2-1","3-1","3-1"]},
+  {h:"Argentina",a:"Sveits",picks:["4-1","2-0","–","2-1","2-3","–","2-1","3-0","–"]}
 ];
 const TIPS_WINNER = ["England","Spania","England","Brasil","Spania","Frankrike","Norge","Nederland","Norge"];
 
@@ -739,7 +744,11 @@ const RESULTS = {
   "Sverige-Japan": "1-1",
   "England-Panama": "2-0",
   "Norge-Elfenbenskysten": "2-1",
-  "Sverige-Frankrike": "0-3"
+  "Sverige-Frankrike": "0-3",
+  "Norge-Brasil": "2-1",
+  "Canada-Marokko": "0-3",
+  "Frankrike-Paraguay": "1-0",
+  "Mexico-England": "2-3"
 };
 const mKey = m => `${m.h}-${m.a}`;
 function parseScore(s){ const p=String(s).split('-').map(n=>parseInt(n.trim(),10)); return {hg:p[0],ag:p[1]}; }
