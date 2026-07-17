@@ -726,7 +726,9 @@ const TIPS_MATCHES = [
   {h:"Spania",a:"Belgia",picks:["4-1","1-1","3-1","2-0","3-2","3-0","2-1","3-1","3-1"]},
   {h:"Argentina",a:"Sveits",picks:["4-1","2-0","3-1","2-1","2-3","3-2","2-1","3-0","1-2"]},
   {h:"Frankrike",a:"Spania",picks:["2-1","1-1","1-2","2-1","3-2","2-2","1-1","0-1","1-2"]},
-  {h:"England",a:"Argentina",picks:["–","2-2","2-2","–","2-2","–","2-1","–","1-2"]}
+  {h:"England",a:"Argentina",picks:["3-1","2-2","2-2","2-1","2-2","–","2-1","0-2","1-2"]},
+  {h:"England",a:"Frankrike",picks:["–","–","–","–","–","–","–","–","–"]},
+  {h:"Argentina",a:"Spania",picks:["–","–","–","–","–","–","–","–","–"]}
 ];
 const TIPS_WINNER = ["England","Spania","England","Brasil","Spania","Frankrike","Norge","Nederland","Norge"];
 
@@ -755,7 +757,8 @@ const RESULTS = {
   "Spania-Belgia": "2-1",
   "Norge-England": "1-1",
   "Argentina-Sveits": "1-1",
-  "Frankrike-Spania": "0-2"
+  "Frankrike-Spania": "0-2",
+  "England-Argentina": "1-2"
 };
 const mKey = m => `${m.h}-${m.a}`;
 function parseScore(s){ const p=String(s).split('-').map(n=>parseInt(n.trim(),10)); return {hg:p[0],ag:p[1]}; }
