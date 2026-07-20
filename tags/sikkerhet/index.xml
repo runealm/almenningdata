@@ -12,9 +12,16 @@
 			<copyright>2026 Almenning Data</copyright>
 		
 		
-			<lastBuildDate>Tue, 24 Mar 2026 00:00:00 +0000</lastBuildDate>
+			<lastBuildDate>Mon, 20 Jul 2026 00:00:00 +0000</lastBuildDate>
 		
 			<atom:link href="https://almenningdata.no/tags/sikkerhet/index.xml" rel="self" type="application/rss+xml" />
+			<item>
+				<title>sårbarhetsscanner i hjemmelabben</title>
+				<link>https://almenningdata.no/posts/s%C3%A5rbarhetsscanner-i-hjemmelabben/</link>
+				<pubDate>Mon, 20 Jul 2026 00:00:00 +0000</pubDate>
+				<guid>https://almenningdata.no/posts/s%C3%A5rbarhetsscanner-i-hjemmelabben/</guid>
+				<description>&lt;p&gt;På jobb bruker jeg mye tid på å finne svakheter før noen andre gjør det. Hjemme har jeg derimot aldri egentlig sett på mitt eget nett med de samme øynene. Og hjemmenettet mitt har etter hvert blitt en liten jungel: varmeovner, kameraer, en robotstøvsuger, en NAS og et par servere – noe av det på samme nett, alt sammen med hver sin lille firmware som ingen egentlig følger med på.&lt;/p&gt;</description>
+			</item>
 			<item>
 				<title>Multi-Admin Approval</title>
 				<link>https://almenningdata.no/posts/multi-admin-approval/</link>

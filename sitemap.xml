@@ -3,18 +3,27 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://almenningdata.no/</loc>
-    <lastmod>2026-05-06T00:00:00+00:00</lastmod>
+    <lastmod>2026-07-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://almenningdata.no/tags/docker/</loc>
+    <lastmod>2026-07-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://almenningdata.no/posts/</loc>
+    <lastmod>2026-07-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://almenningdata.no/posts/s%C3%A5rbarhetsscanner-i-hjemmelabben/</loc>
+    <lastmod>2026-07-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://almenningdata.no/tags/sikkerhet/</loc>
+    <lastmod>2026-07-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://almenningdata.no/tags/</loc>
+    <lastmod>2026-07-20T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://almenningdata.no/posts/det-l%C3%B8nner-seg-%C3%A5-v%C3%A6re-illojal/</loc>
     <lastmod>2026-05-06T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://almenningdata.no/tags/foobar/</loc>
-    <lastmod>2026-05-06T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://almenningdata.no/posts/</loc>
-    <lastmod>2026-05-06T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://almenningdata.no/tags/</loc>
     <lastmod>2026-05-06T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://almenningdata.no/posts/den-termiske-skriveren/</loc>
@@ -30,9 +39,6 @@
     <lastmod>2026-03-24T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://almenningdata.no/posts/multi-admin-approval/</loc>
-    <lastmod>2026-03-24T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://almenningdata.no/tags/sikkerhet/</loc>
     <lastmod>2026-03-24T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://almenningdata.no/posts/sp%C3%B8rr-uniflow-online-brukere-basert-p%C3%A5-rolle--n%C3%A5r-gui-et-svikter/</loc>

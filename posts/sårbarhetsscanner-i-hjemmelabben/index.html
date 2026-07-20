@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>sårbarhetsscanner i hjemmelabben :: Almenning Data</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="På jobb bruker jeg mye tid på å finne svakheter før noen andre gjør det. Hjemme har jeg derimot aldri egentlig sett på mitt eget nett med de samme øynene. Og hjemmenettet mitt har etter hvert blitt en liten jungel: varmeovner, kameraer, en robotstøvsuger, en NAS og et par servere – noe av det på samme nett, alt sammen med hver sin lille firmware som ingen egentlig følger med på.
+" />
+<meta name="keywords" content="" />
+
+  <meta name="robots" content="noodp" />
+
+<link rel="canonical" href="https://almenningdata.no/posts/s%C3%A5rbarhetsscanner-i-hjemmelabben/" />
+
+
+
+
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/buttons.min.86f6b4c106b6c6eb690ae5203d36b442c1f66f718ff4e8164fa86cf6c61ad641.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/code.min.c4581949edab7810737609fc5568852bcd908945f14561e366dcd2300a370545.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/fonts.min.5bb7ed13e1d00d8ff39ea84af26737007eb5051b157b86fc24487c94f3dc8bbe.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/footer.min.eb8dfc2c6a7eafa36cd3ba92d63e69e849e2200e0002a228d137f236b09ecd75.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/gist.min.a751e8b0abe1ba8bc53ced52a38b19d8950fe78ca29454ea8c2595cf26aad5c0.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/header.min.75c7eb0e2872d95ff48109c6647d0223a38db52e2561dd87966eb5fc7c6bdac6.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/main.min.36833afd348409fc6c3d09d0897c5833d9d5bf1ff31f5e60ea3ee42ce2b1268c.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/menu.min.3c17467ebeb3d38663dce68f71f519901124fa5cbb4519b2fb0667a21e9aca39.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/pagination.min.bbb986dbce00a5ce5aca0504b7925fc1c581992a4bf57f163e5d69cc1db7d836.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/post.min.e6dddd258e64c83e05cec0cd49c05216742d42fc8ecbfbe6b67083412b609bd3.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/syntax.min.a2cc694a9b481f15d41722bffc2cc54eea4c4f74fd9072b0b33253604c22606e.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/terminal.min.e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css">
+
+  
+  <link rel="stylesheet" href="https://almenningdata.no/css/terms.min.b81791663c3790e738e571cdbf802312390d30e4b1d8dc9d814a5b5454d0ac11.css">
+
+
+
+
+
+
+
+<link rel="shortcut icon" href="https://almenningdata.no/favicon.png">
+<link rel="apple-touch-icon" href="https://almenningdata.no/apple-touch-icon.png">
+
+
+<meta name="twitter:card" content="summary" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="sårbarhetsscanner i hjemmelabben">
+<meta property="og:description" content="På jobb bruker jeg mye tid på å finne svakheter før noen andre gjør det. Hjemme har jeg derimot aldri egentlig sett på mitt eget nett med de samme øynene. Og hjemmenettet mitt har etter hvert blitt en liten jungel: varmeovner, kameraer, en robotstøvsuger, en NAS og et par servere – noe av det på samme nett, alt sammen med hver sin lille firmware som ingen egentlig følger med på.
+" />
+<meta property="og:url" content="https://almenningdata.no/posts/s%C3%A5rbarhetsscanner-i-hjemmelabben/" />
+<meta property="og:site_name" content="Almenning Data" />
+
+  <meta property="og:image" content="https://almenningdata.no/og-image.png">
+
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+
+
+  <meta property="article:published_time" content="2026-07-20 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+<style>
+  .code-block-wrapper {
+    position: relative;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    background: #555;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    opacity: 0.7;
+  }
+  .copy-btn:hover { opacity: 1; }
+</style>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("pre").forEach(function (pre) {
+      var wrapper = document.createElement("div");
+      wrapper.className = "code-block-wrapper";
+      pre.parentNode.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+
+      var btn = document.createElement("button");
+      btn.className = "copy-btn";
+      btn.innerText = "Copy";
+      wrapper.appendChild(btn);
+
+      btn.addEventListener("click", function () {
+        var code = pre.innerText;
+        navigator.clipboard.writeText(code).then(function () {
+          btn.innerText = "Copied!";
+          setTimeout(function () { btn.innerText = "Copy"; }, 2000);
+        });
+      });
+    });
+  });
+</script>
+
+</head>
+<body>
+
+
+<div class="container">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    almenningdata
+  </div>
+</a>
+
+    </div>
+    
+      <ul class="menu menu--mobile">
+  <li class="menu__trigger">Menu&nbsp;▾</li>
+  <li>
+    <ul class="menu__dropdown">
+      
+        
+          <li><a href="/about">whoami</a></li>
+        
+      
+        
+          <li><a href="/showcase">prosjekter</a></li>
+        
+      
+        
+          <li><a href="https://ping.almenningdata.no">ping</a></li>
+        
+      
+      
+    </ul>
+  </li>
+</ul>
+
+    
+    
+  </div>
+  
+    <nav class="navigation-menu">
+  <ul class="navigation-menu__inner menu--desktop">
+    
+      
+        
+          <li><a href="/about" >whoami</a></li>
+        
+      
+        
+          <li><a href="/showcase" >prosjekter</a></li>
+        
+      
+        
+          <li><a href="https://ping.almenningdata.no" >ping</a></li>
+        
+      
+      
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<article class="post">
+  <h1 class="post-title">
+    <a href="https://almenningdata.no/posts/s%C3%A5rbarhetsscanner-i-hjemmelabben/">sårbarhetsscanner i hjemmelabben</a>
+  </h1>
+  <div class="post-meta"><time class="post-date">2026-07-20</time></div>
+
+  
+    <span class="post-tags">
+      
+      #<a href="https://almenningdata.no/tags/sikkerhet/">Sikkerhet</a>&nbsp;
+      
+      #<a href="https://almenningdata.no/tags/docker/">docker</a>&nbsp;
+      
+    </span>
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>På jobb bruker jeg mye tid på å finne svakheter før noen andre gjør det. Hjemme har jeg derimot aldri egentlig sett på mitt eget nett med de samme øynene. Og hjemmenettet mitt har etter hvert blitt en liten jungel: varmeovner, kameraer, en robotstøvsuger, en NAS og et par servere – noe av det på samme nett, alt sammen med hver sin lille firmware som ingen egentlig følger med på.</p>
+<p>Så jeg bestemte meg for å sette opp en sårbarhetsscanner hjemme. Valget falt på <strong>Greenbone</strong>, storebroren til det de fleste kjenner som OpenVAS – og som fint kjører i Docker.</p>
+<h2 id="litt-om-greenbone">Litt om Greenbone<a href="#litt-om-greenbone" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Historien er faktisk ganske morsom. I 2005 bestemte utviklerne bak sårbarhetsscanneren <strong>Nessus</strong> seg for å gå fra åpen kildekode til en lukket, kommersiell modell. Som svar tok noen av utviklerne den siste åpne versjonen og forket den videre – og resultatet ble etter hvert <strong>OpenVAS</strong> (Open Vulnerability Assessment Scanner). Prosjektet ble drevet frem med støtte fra det tyske BSI (deres svar på NSM), og siden 2008 er det selskapet <strong>Greenbone</strong> som har stått bak utviklingen.</p>
+<p>I 2017 ryddet Greenbone litt i navnene. Det som før het «OpenVAS framework» ble til <strong>GVM</strong> – Greenbone Vulnerability Management. OpenVAS er i dag bare navnet på selve skannemotoren, mens GVM er hele rammeverket rundt: en manager-tjeneste (<code>gvmd</code>), et web-grensesnitt (<code>gsad</code>/GSA), og ikke minst <strong>Greenbone Community Feed</strong> – en samling på godt over 100 000 sårbarhetstester som oppdateres daglig. Alt sammen er gratis og åpen kildekode. Den gratis varianten heter i dag <strong>Greenbone Community Edition</strong>.</p>
+<p>En grei måte å tenke på det: der <code>nmap</code> forteller deg <em>hva</em> som kjører på nettet, forteller Greenbone deg <em>hva som er galt med det</em>.</p>
+<h2 id="hva-skal-man-med-sånt-hjemme">Hva skal man med sånt hjemme?<a href="#hva-skal-man-med-sånt-hjemme" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Godt spørsmål – dette er tross alt enterprise-verktøy. Men det er flere gode grunner til å kjøre det i en hjemmelab:</p>
+<ul>
+<li>
+<p><strong>Se nettet ditt utenfra.</strong> En uautentisert scan viser deg omtrent det en angriper på nettet ditt ville sett: åpne porter, eksponerte tjenester, gammel firmware.</p>
+</li>
+<li>
+<p><strong>Holde øye med IoT.</strong> Billige smartdingser er beryktet for å aldri få oppdateringer. Greenbone plukker opp kjente svakheter i akkurat den typen enheter.</p>
+</li>
+<li>
+<p><strong>Verifisere før og etter herding.</strong> Kjør en scan mot NAS-en eller serveren, gjør endringene dine, kjør på nytt og se forskjellen svart på hvitt.</p>
+</li>
+<li>
+<p><strong>Teste segmentering.</strong> Holder VLAN-ene og brannmurreglene faktisk vann? En scan fra ett segment mot et annet avslører raskt om isolasjonen er reell eller bare teoretisk.</p>
+</li>
+<li>
+<p><strong>Lære.</strong> Det er rett og slett lærerikt å bli kjent med verktøyene proffene bruker, i trygge omgivelser der du eier alt selv.</p>
+</li>
+</ul>
+<p>En liten advarsel med en gang: sårbarhetsscanning kan være røft mot skjøre enheter. De billigste IoT-dingsene kan i verste fall henge seg eller reboote under en scan. (klok av skade)</p>
+<h2 id="én-tjeneste-nei--en-hel-stack">Én tjeneste? Nei – en hel stack!<a href="#én-tjeneste-nei--en-hel-stack" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Det første som overrasket meg: Greenbone er ikke <em>én</em> container. Det er over tjue tjenester som spiller sammen – skannemotoren, manageren, web-UI-et, en PostgreSQL-database, Redis, og en haug med feed-containere som laster ned all sårbarhetsdataen.</p>
+<p>Derfor passer <code>docker compose</code> så godt: i stedet for tjue løse <code>docker run</code>-kommandoer beskriver du hele stacken i én fil, og lar compose orkestrere oppstart og avhengigheter. Greenbone leverer en ferdig <code>compose.yaml</code>, så jobben min var mest å laste den ned og gjøre noen små tilpasninger.</p>
+<h2 id="slik-satte-jeg-det-opp">Slik satte jeg det opp<a href="#slik-satte-jeg-det-opp" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<h3 id="1-hent-den-offisielle-compose-fila">1. Hent den offisielle compose-fila<a href="#1-hent-den-offisielle-compose-fila" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>mkdir -p ~/greenbone <span style="color:#f92672">&amp;&amp;</span> cd ~/greenbone
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>curl -f -O -L https://greenbone.github.io/docs/latest/_static/compose.yaml
+</span></span></code></pre></div><h3 id="2-åpne-porten">2. Åpne porten<a href="#2-åpne-porten" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>Som standard binder web-grensesnittet seg til <code>127.0.0.1</code> – altså kun tilgjengelig fra selve verten. Kjører du dette på en headless server (som meg), vil du nå det fra en annen maskin. Jeg fjernet derfor <code>127.0.0.1</code>-låsen på <code>nginx</code>-tjenesten:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">nginx</span>:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">image</span>: <span style="color:#ae81ff">registry.community.greenbone.net/community/nginx:latest</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">ports</span>:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">443</span>:<span style="color:#ae81ff">443</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">9392</span>:<span style="color:#ae81ff">9392</span>
+</span></span></code></pre></div><p>En liten felle her: <code>nginx</code> sender all HTTP-trafikk (port 9392) videre til HTTPS på 443. Du bør derfor bruke <code>https://&lt;server-ip&gt;</code> for å komme inn. Er port 443 allerede opptatt på verten din, kan du mappe den til noe annet, for eksempel <code>8443:443</code>, og bruke <code>https://&lt;server-ip&gt;:8443</code>.</p>
+<h3 id="3-start-stacken">3. Start stacken<a href="#3-start-stacken" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>docker compose -f compose.yaml up -d
+</span></span></code></pre></div><p>Første oppstart drar ned en drøss med images, så her er det bare å smøre seg med tålmodighet.</p>
+<blockquote>
+<p><strong>Tips:</strong> På treg lagring kan feed-containerne bruke lang tid på å bli «healthy», og da kan resten av stacken time ut under oppstart. Løsningen er å starte feed-containerne først og la dem laste ferdig i fred, før du fyrer opp resten:</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>docker compose -f compose.yaml up -d notus-data vulnerability-tests scap-data <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>dfn-cert-data cert-bund-data report-formats data-objects
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># vent til de er «healthy», så:</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>docker compose -f compose.yaml up -d
+</span></span></code></pre></div><h3 id="4-sett-admin-passord">4. Sett admin-passord<a href="#4-sett-admin-passord" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>Standardbrukeren er <code>admin</code>. Sett et skikkelig passord med en gang:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>docker compose -f compose.yaml exec -u gvmd gvmd gvmd --user<span style="color:#f92672">=</span>admin --new-password<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;ditt-passord&#39;</span>
+</span></span></code></pre></div><h3 id="5-vent-på-feeden">5. Vent på feeden<a href="#5-vent-på-feeden" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>Nå kommer den delen som krever mest tålmodighet. Selv om alle containerne kjører, må Greenbone laste hele feeden – alle CVE-ene, sårbarhetstestene og advisories – inn i databasen. Dette kan ta alt fra en halvtime til flere timer.</p>
+<p>Du følger med under <strong>Administration → Feed Status</strong>. Så lenge radene står som «Update in progress…» jobber den fortsatt. Når de i stedet viser en versjon/dato, er feeden inne og scanneren klar til bruk. Ikke start en scan før dette er på plass – uten ferdig feed blir resultatene ufullstendige.</p>
+<h2 id="slik-setter-du-opp-en-scan">Slik setter du opp en scan<a href="#slik-setter-du-opp-en-scan" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Greenbone bygger på tre byggeklosser: et <strong>Target</strong> (hva som skal skannes), en <strong>Task</strong> (som kobler targetet til en skannekonfigurasjon) og et <strong>Report</strong> (resultatet).</p>
+<h3 id="target">Target<a href="#target" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>Under <strong>Configuration → Targets</strong> lager du et nytt target:</p>
+<ul>
+<li>
+<p><strong>Hosts:</strong> subnettet ditt, for eksempel <code>10.0.0.0/24</code></p>
+</li>
+<li>
+<p><strong>Alive Test:</strong> dette er viktig. Standarden bruker ping for å avgjøre om en host «lever» før den skannes. Problemet er at mange enheter – særlig IoT og Windows-maskiner – ikke svarer på ping, og da hoppes de over selv om de er i live. Jeg satte den derfor til <strong>Consider Alive</strong>, som behandler alle adresser som levende. Den bruker mer tid, men får med seg alt.</p>
+</li>
+</ul>
+<h3 id="task">Task<a href="#task" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>Under <strong>Scans → Tasks</strong> lager du en ny task:</p>
+<ul>
+<li>
+<p><strong>Scan Targets:</strong> targetet du nettopp lagde</p>
+</li>
+<li>
+<p><strong>Scan Config:</strong> <strong>Full and fast</strong> er et godt standardvalg – grundig, men optimalisert for hastighet</p>
+</li>
+<li>
+<p><strong>Scanner:</strong> OpenVAS (default)</p>
+</li>
+<li>
+<p><strong>Credentials:</strong> la stå tomt for første runde. En uautentisert scan ser nettet slik en utenforstående ville sett det. Autentiserte scans (der Greenbone logger inn på hver host og sjekker patch-nivå innenfra) er kraftigere, men det er et eget kapittel.</p>
+</li>
+</ul>
+<h3 id="kjør--og-vær-tålmodig">Kjør – og vær tålmodig<a href="#kjør--og-vær-tålmodig" class="hanchor" ariaLabel="Anchor">#</a> </h3>
+<p>Trykk på den grønne start-pilen. Statusen går til <strong>Running</strong> med en prosentindikator.</p>
+<p>En ting å merke seg: prosenten regnes ut fra hosts, ikke tid. Den kan stå lenge på lave tall, hoppe ujevnt, og henge på 1 % eller 98 % i det som føles som en evighet. Det betyr ikke at noe har hengt seg. Et fullt nettverksscan kan fint ta flere timer – la den gjerne gå over natten.</p>
+<p>Du kan følge resultatene fortløpende ved å klikke deg inn på selve tasken og se rapporten bygge seg opp per host, med funn sortert etter alvorlighetsgrad (High/Medium/Low).</p>
+<h2 id="resultat">Resultat<a href="#resultat" class="hanchor" ariaLabel="Anchor">#</a> </h2>
+<p>Etter noen timer satt jeg igjen med et ganske avslørende bilde av mitt eget nett – hvilke enheter som eksponerer mest, hvor det ligger gammel firmware, og hvilke tjenester jeg egentlig ikke visste var åpne. Jeg har planer om dykke mer i Greenbone og andre sårbarhetsscannere.</p>
+<p>!<img src="/images/Pasted%20image%2020260720203330.png" alt="Image Description"></p>
+
+      </div></div>
+
+  
+    
+<div class="pagination">
+  <div class="pagination__title">
+    <span class="pagination__title-h"></span>
+    <hr />
+  </div>
+  <div class="pagination__buttons">
+    
+    
+    
+      <a href="https://almenningdata.no/posts/det-l%C3%B8nner-seg-%C3%A5-v%C3%A6re-illojal/" class="button inline next">
+         [<span class="button__text">Det lønner seg å være illojal</span>] &gt;
+      </a>
+    
+  </div>
+</div>
+
+
+  
+
+  
+    
+
+  
+</article>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright copyright--user">
+        <span>2026 Almenning Data</span>
+    
+      <span>:: <a href="https://github.com/panr/hugo-theme-terminal" target="_blank">Theme</a> made by <a href="https://github.com/panr" target="_blank">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+
+
+
+
+
+<script type="text/javascript" src="/bundle.min.js"></script>
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>
