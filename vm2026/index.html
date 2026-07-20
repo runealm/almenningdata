@@ -410,7 +410,7 @@ const NO_MATCHES = [
 const BIG_MATCHES = [
   {when:"Torsdag 11. juni · Åpningskamp", teams:["Mexico","Sør-Afrika"], time:"21:00", note:"VM sparkes i gang", venue:"Mexico by", ch:"TV2", night:false, res:"2-0"},
   {when:"Lørdag 18. juli · Bronsefinale", teams:["England","Frankrike"], time:"23:00", note:"Deschamps' siste · Mbappé jakter Gullstøvelen", venue:"Miami", ch:"NRK", night:false},
-  {when:"Søndag 19. juli · Finalen", teams:["Argentina","Spania"], time:"21:00", note:"Messi jakter ny gulltittel", venue:"New York", ch:"NRK", night:false}
+  {when:"Søndag 19. juli · Finalen", teams:["Argentina","Spania"], time:"21:00", note:"Spania er verdensmester! (1–0 e.eo.)", venue:"New York", ch:"NRK", night:false, res:"1-0"}
 ];
 
 const KO = [
@@ -736,7 +736,7 @@ const TIPS_WINNER = ["England","Spania","England","Brasil","Spania","Frankrike",
 // --- Poeng & tabell ---
 // Poengsystem: 3 = eksakt riktig resultat, 1 = riktig utfall (seier/uavgjort), 0 = bom.
 const PTS_EXACT = 3, PTS_OUTCOME = 1, PTS_WINNER = 1;
-let WINNER_RESULT = null; // Faktisk verdensmester – fyll inn når finalen er spilt, f.eks. "Norge"
+let WINNER_RESULT = "Spania"; // Faktisk verdensmester – fyll inn når finalen er spilt, f.eks. "Norge"
 // Fasit – legg til ettersom kampene spilles. Nøkkel = "Hjemmelag-Bortelag", samme retning som over.
 const RESULTS = {
   "Norge-Irak": "4-1",
@@ -759,7 +759,9 @@ const RESULTS = {
   "Norge-England": "1-1",
   "Argentina-Sveits": "1-1",
   "Frankrike-Spania": "0-2",
-  "England-Argentina": "1-2"
+  "England-Argentina": "1-2",
+  "England-Frankrike": "6-4",
+  "Argentina-Spania": "0-0"
 };
 const mKey = m => `${m.h}-${m.a}`;
 function parseScore(s){ const p=String(s).split('-').map(n=>parseInt(n.trim(),10)); return {hg:p[0],ag:p[1]}; }
